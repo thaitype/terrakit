@@ -1,5 +1,5 @@
 {
-  "name": "examples",
+  "name": "@examples/basic",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -15,11 +15,14 @@
     "upgrade:next": "bun add cdktf@next cdktf-cli@next"
   },
   "dependencies": {
+    "terrakit": "workspace:*",
     "@cdktf/provider-azurerm": "12.21.0",
     "cdktf": "^0.20.7",
     "constructs": "^10.3.0"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/bun": "latest"
   },
   "peerDependencies": {

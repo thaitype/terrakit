@@ -3,7 +3,7 @@ import { App, TerraformStack } from "cdktf";
 import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider";
 import * as az from '@cdktf/provider-azurerm';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group";
-import { getResourceName } from "../../src/index.js";
+import { getResourceName } from "terrakit";
 
 class MyStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -21,6 +21,7 @@ class MyStack extends TerraformStack {
     })
 
     resourceGroup.id
+
   }
 }
 
