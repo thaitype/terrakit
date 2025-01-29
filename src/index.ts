@@ -1,6 +1,6 @@
 /**
  * Main entry point for the library
- * 
+ *
  * Export all the functions from the library
  */
 
@@ -11,7 +11,6 @@ export * from './calculator.js';
  */
 export * as calculator from './calculator.js';
 
-
-export function getResourceName(){
+export function getResourceName() {
   return 'calculator';
 }
