@@ -1,0 +1,11 @@
+{
+  "language": "typescript",
+  "app": "bun run ./src/main.ts",
+  "projectId": "1e3d83e3-44a5-499f-b5e6-56471b035359",
+  "sendCrashReports": "false",
+  "terraformProviders": [
+    "hashicorp/azurerm@~>3.84.0"
+  ],
+  "terraformModules": [],
+  "context": {}
+}

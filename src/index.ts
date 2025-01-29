@@ -10,3 +10,8 @@ export * from './calculator.js';
  * Export `add` modules with module name `add`
  */
 export * as calculator from './calculator.js';
+
+
+export function getResourceName(){
+  return 'calculator';
+}
