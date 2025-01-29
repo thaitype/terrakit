@@ -36,12 +36,11 @@
     "build-annotate": "babel dist --plugins annotate-pure-calls --out-dir dist --source-maps"
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "@babel/cli": "^7.24.5",
     "@babel/core": "^7.24.5",
     "@babel/plugin-transform-export-namespace-from": "^7.24.1",
     "@babel/plugin-transform-modules-commonjs": "^7.24.1",
-    "@type-challenges/utils": "^0.1.1",
+    "@types/bun": "^1.2.1",
     "babel-plugin-annotate-pure-calls": "^0.4.0",
     "release-it": "^17.3.0"
   },
