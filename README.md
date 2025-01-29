@@ -2,6 +2,12 @@
 
 TypeScript-powered Infrastructure as Code (Backed by CDKTF)
 
+## Example
+
+```
+make examples basic get
+```
+
 
 ## CDKTF Documentation
 
