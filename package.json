@@ -25,6 +25,7 @@
     "package.json"
   ],
   "scripts": {
+    "get": "cd examples/basic && bun get",
     "check": "tsc -b tsconfig.json",
     "check:watch": "tsc -b tsconfig.json -w",
     "prepublishOnly": "bun run build",
@@ -40,6 +41,7 @@
     "@babel/core": "^7.24.5",
     "@babel/plugin-transform-export-namespace-from": "^7.24.1",
     "@babel/plugin-transform-modules-commonjs": "^7.24.1",
+    "@cdktf/provider-azurerm": "12.21.0",
     "@types/bun": "^1.2.1",
     "babel-plugin-annotate-pure-calls": "^0.4.0",
     "prettier": "^3.4.2",

@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "typescript-npm-boilerplate-esm-cjs",
+      "name": "terrakit",
       "dependencies": {
         "cdktf": "^0.20.7",
         "constructs": "^10.3.0",
@@ -12,6 +12,7 @@
         "@babel/core": "^7.24.5",
         "@babel/plugin-transform-export-namespace-from": "^7.24.1",
         "@babel/plugin-transform-modules-commonjs": "^7.24.1",
+        "@cdktf/provider-azurerm": "12.21.0",
         "@types/bun": "^1.2.1",
         "babel-plugin-annotate-pure-calls": "^0.4.0",
         "prettier": "^3.4.2",
@@ -62,6 +63,8 @@
     "@babel/traverse": ["@babel/traverse@7.26.7", "", { "dependencies": { "@babel/code-frame": "^7.26.2", "@babel/generator": "^7.26.5", "@babel/parser": "^7.26.7", "@babel/template": "^7.25.9", "@babel/types": "^7.26.7", "debug": "^4.3.1", "globals": "^11.1.0" } }, "sha512-1x1sgeyRLC3r5fQOM0/xtQKsYjyxmFjaOrLJNtZ81inNjyJHGIolTULPiSc/2qe1/qfpFLisLQYFnnZl7QoedA=="],
 
     "@babel/types": ["@babel/types@7.26.7", "", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, "sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg=="],
+
+    "@cdktf/provider-azurerm": ["@cdktf/provider-azurerm@12.21.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-7KvswoyuMi8+WDv1rRjaPZO1NSQfKA4yr7v0gm5jkqowAcA29CID7iwnBXo4KYci/yHX+TYgacjooLdBGXnf0Q=="],
 
     "@iarna/toml": ["@iarna/toml@2.2.5", "", {}, "sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg=="],
 

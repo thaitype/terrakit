@@ -20,6 +20,7 @@
     "constructs": "^10.3.0"
   },
   "devDependencies": {
+    "cdktf-cli": "^0.20.11",
     "@types/bun": "latest"
   },
   "peerDependencies": {
