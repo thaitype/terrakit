@@ -6,6 +6,9 @@
 examples:
 	cd examples/$(word 2,$(MAKECMDGOALS)) && bun install && bun run $(word 3,$(MAKECMDGOALS))
 
+clean:
+	scripts/clean-examples.sh
+
 # Prevent errors when arguments are treated as targets
 %:
 	@:

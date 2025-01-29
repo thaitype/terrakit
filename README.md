@@ -8,6 +8,11 @@ TypeScript-powered Infrastructure as Code (Backed by CDKTF)
 make examples basic get
 ```
 
+### Clean all Examples built files
+
+```
+make clean
+```
 
 ## CDKTF Documentation
 
