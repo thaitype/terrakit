@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "get": "cdktf get",
+    "get": "bunx cdktf-cli get",
     "build": "tsc",
-    "synth": "cdktf synth",
+    "synth": "bunx cdktf-cli synth",
     "compile": "tsc --pretty",
     "watch": "tsc -w",
     "test": "bun test",
@@ -20,7 +20,6 @@
     "constructs": "^10.3.0"
   },
   "devDependencies": {
-    "cdktf-cli": "^0.20.11",
     "@types/bun": "latest"
   },
   "peerDependencies": {

@@ -6,12 +6,13 @@ TypeScript-powered Infrastructure as Code (Backed by CDKTF)
 
 ```
 make examples basic get
+make examples basic synth
 ```
 
 ### Clean all Examples built files
 
 ```
-make clean
+make clean-all
 ```
 
 ## CDKTF Documentation
