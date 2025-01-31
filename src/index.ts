@@ -14,3 +14,6 @@ export * as calculator from './calculator.js';
 export function getResourceName() {
   return 'calculator';
 }
+
+
+export * from './TerrakitStack.js';
