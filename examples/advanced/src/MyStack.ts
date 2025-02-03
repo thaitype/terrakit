@@ -18,11 +18,9 @@ export interface TerrakitStackConfig {
 
 export class MyStack extends TerrakitStack<TerrakitStackConfig> {
 
-  providers!: Record<keyof TerrakitStackConfig['providers'], TerraformProvider>;
 
   constructor(scope: Construct, public readonly options: SetRequired<TerrakitOptions<TerrakitStackConfig>, 'identifier' | 'providers'>) {
     super(scope, options);
-    this.setupProviders();
 
     this.controller
       .addResource('aaa1', (id) => this.resourceGroup(id))
@@ -35,15 +33,6 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
       name: 'rg-' + id,
       location: 'eastus'
     });
-  }
-
-  setupProviders() {
-    if(!this.providers) {
-      this.providers = {} as Record<string, any>;
-    }
-    for(const [key, provider] of Object.entries(this.options.providers)) {
-      (this.providers as Record<string, any>)[key] = provider(this);
-    }
   }
 
 
