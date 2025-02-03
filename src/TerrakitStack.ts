@@ -2,7 +2,7 @@ import { App, TerraformStack, TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 import { z } from "zod";
 
-export interface TerrakitOptions<Identifier extends object = {}> {
+export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitStackConfig> {
   /**
    * Terraform stack ID, and the `identifier` needs to be provided.
    * 
@@ -12,22 +12,27 @@ export interface TerrakitOptions<Identifier extends object = {}> {
   /**
    * The identifier of the stack.
    */
-  identifier?: Identifier;
+  identifier?: Config['identifier'];
   /**
    * The providers to use in this stack.
    * 
    * @default - If not provided, the stack will use the default providers.
    */
-  providers?: Record<string, TerraformProvider>;
+  providers?: Config['providers'];
 }
 
-export class TerrakitStack<Identifier extends object = {}> extends TerraformStack {
-  constructor(scope: Construct, options?: TerrakitOptions<Identifier>) {
+interface TerrakitStackConfig {
+  identifier: object;
+  providers: Record<string, TerraformProvider>;
+}
+
+export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
+  constructor(scope: Construct, options?: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
     super(scope, id);
   }
 
-  static generateStackId<Identifier extends object>(options?: TerrakitOptions<Identifier>): string {
+  static generateStackId<Config extends TerrakitStackConfig>(options?: TerrakitOptions<Config>): string {
     if (options && options.id) {
       return options.id;
     }

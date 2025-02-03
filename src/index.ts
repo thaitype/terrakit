@@ -17,3 +17,4 @@ export function getResourceName() {
 
 
 export * from './TerrakitStack.js';
+export * from './types.js';
