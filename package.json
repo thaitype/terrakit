@@ -60,7 +60,7 @@
   },
   "homepage": "https://github.com/thaitype/typescript-npm-boilerplate-esm-cjs",
   "dependencies": {
-    "cdktf": "^0.20.7",
-    "constructs": "^10.3.0"
+    "cdktf": "^0.20.11",
+    "constructs": "^10.4.2"
   }
 }

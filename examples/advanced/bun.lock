@@ -4,9 +4,9 @@
     "": {
       "name": "examples",
       "dependencies": {
-        "@cdktf/provider-azurerm": "12.21.0",
-        "cdktf": "^0.20.7",
-        "constructs": "^10.3.0",
+        "@cdktf/provider-azurerm": "13.17.0",
+        "cdktf": "^0.20.11",
+        "constructs": "^10.4.2",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -17,7 +17,7 @@
     },
   },
   "packages": {
-    "@cdktf/provider-azurerm": ["@cdktf/provider-azurerm@12.21.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-7KvswoyuMi8+WDv1rRjaPZO1NSQfKA4yr7v0gm5jkqowAcA29CID7iwnBXo4KYci/yHX+TYgacjooLdBGXnf0Q=="],
+    "@cdktf/provider-azurerm": ["@cdktf/provider-azurerm@13.17.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-lYd4D0AZWMAW9GeCpTJ/UChhqYHKNhfTzV0yUBOtNeTgFJRSNu8kmdDZHO29WoxsWBlbX3pneaki7WKgQYIx7Q=="],
 
     "@types/bun": ["@types/bun@1.2.1", "", { "dependencies": { "bun-types": "1.2.1" } }, "sha512-iiCeMAKMkft8EPQJxSbpVRD0DKqrh91w40zunNajce3nMNNFd/LnAquVisSZC+UpTMjDwtcdyzbWct08IvEqRA=="],
 

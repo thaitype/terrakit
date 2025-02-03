@@ -15,9 +15,9 @@
     "upgrade:next": "bun add cdktf@next cdktf-cli@next"
   },
   "dependencies": {
-    "@cdktf/provider-azurerm": "12.21.0",
-    "cdktf": "^0.20.7",
-    "constructs": "^10.3.0"
+    "@cdktf/provider-azurerm": "13.17.0",
+    "cdktf": "^0.20.11",
+    "constructs": "^10.4.2"
   },
   "devDependencies": {
     "@types/bun": "latest"
