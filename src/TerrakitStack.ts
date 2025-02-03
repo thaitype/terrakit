@@ -46,4 +46,10 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     return Object.entries(identifier).map(([key, value]) => `${key}_${value}`).join('-');
   }
 
+  output(){
+    return {
+      mockOutput: 'mockOutput'
+    }
+  }
+
 }
