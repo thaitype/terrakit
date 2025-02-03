@@ -2,7 +2,7 @@ import { App, TerraformStack, TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 import { z } from "zod";
 
-export interface TerrakitOptions<Identifier extends object> {
+export interface TerrakitOptions<Identifier extends object = {}> {
   /**
    * Terraform stack ID, and the `identifier` needs to be provided.
    * 
@@ -21,7 +21,7 @@ export interface TerrakitOptions<Identifier extends object> {
   providers?: Record<string, TerraformProvider>;
 }
 
-export class TerrakitStack<Identifier extends object> extends TerraformStack {
+export class TerrakitStack<Identifier extends object = {}> extends TerraformStack {
   constructor(scope: Construct, options?: TerrakitOptions<Identifier>) {
     const id = TerrakitStack.generateStackId(options);
     super(scope, id);
@@ -35,6 +35,9 @@ export class TerrakitStack<Identifier extends object> extends TerraformStack {
       throw new Error('The identifier is required to generate the stack id.');
     }
     const identifier = z.record(z.string()).parse(options.identifier);
+    if(Object.keys(identifier).length === 0) {
+      throw new Error('The identifier must not be empty.');
+    }
     return Object.entries(identifier).map(([key, value]) => `${key}_${value}`).join('-');
   }
 

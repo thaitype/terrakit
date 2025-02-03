@@ -1,19 +1,17 @@
 import { Construct } from "constructs";
 import { App, TerraformStack } from "cdktf";
-import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider";
 import * as az from '@cdktf/provider-azurerm';
-import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group";
-import { getResourceName } from "terrakit";
+import { getResourceName, TerrakitStack, type TerrakitOptions } from 'terrakit';
+import { AzurermProvider } from '../.gen/providers/azurerm/provider/index.js';
+import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js';
 
-class MyStack extends TerraformStack {
-  constructor(scope: Construct, id: string) {
-    super(scope, id);
+class MyStack extends TerrakitStack {
+  constructor(scope: Construct, options: TerrakitOptions) {
+    super(scope, options);
 
     // define resources here
 
-    new AzurermProvider(this, "AzureRm", {
-      features: {},
-    });
+    new AzurermProvider(this, "AzureRm", {});
 
     const resourceGroup = new ResourceGroup(this, "rg-example", {
       name: "devops-resource-group-" + getResourceName(),
@@ -25,5 +23,7 @@ class MyStack extends TerraformStack {
 }
 
 const app = new App();
-new MyStack(app, "demo-cdktf");
+new MyStack(app, {
+  id: "demo-cdktf"
+});
 app.synth();
