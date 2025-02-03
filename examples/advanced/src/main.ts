@@ -29,7 +29,9 @@ const myStack = new MyStack(app, {
 //     site: 'active'
 //   },
 //   providers: {
-//     defaultAzureProvider
+//     defaultAzureProvider: (scope) => new AzurermProvider(scope, "azurerm_provider_default", {
+//       skipProviderRegistration: true,
+//     })
 //   },
 //   overrideResources: {
 //     myResourceGroup: {
