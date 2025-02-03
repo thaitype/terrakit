@@ -11,7 +11,7 @@ const app = new App();
 const defaultAzureProvider = new AzurermProvider(app, "azurerm_provider_default", {
   skipProviderRegistration,
 });
-new MyStack(app, "demo-cdktf", {
+new MyStack(app, {
   identifier: {
     env: 'prod',
     slot: 'prod',

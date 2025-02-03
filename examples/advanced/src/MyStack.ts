@@ -9,8 +9,8 @@ export interface MyIdentifier {
 }
 
 export class MyStack extends TerrakitStack<MyIdentifier> {
-  constructor(scope: Construct, id: string, options: TerrakitOptions<MyIdentifier>) {
-    super(scope, id, options);
+  constructor(scope: Construct, options: TerrakitOptions<MyIdentifier>) {
+    super(scope, options);
   }
 }
 
