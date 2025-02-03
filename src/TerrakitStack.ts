@@ -1,35 +1,29 @@
 import { App, TerraformStack, TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 import { z } from "zod";
+import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
 
-export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitStackConfig> {
-  /**
-   * Terraform stack ID, and the `identifier` needs to be provided.
-   * 
-   * @default - A unique stack id will be generated from the identifier.
-   */
-  id?: string;
-  /**
-   * The identifier of the stack.
-   */
-  identifier?: Config['identifier'];
-  /**
-   * The providers to use in this stack.
-   * 
-   * @default - If not provided, the stack will use the default providers.
-   */
-  providers?: Config['providers'];
-}
+export class ResourceController {
 
-interface TerrakitStackConfig {
-  identifier: object;
-  providers: object;
+  addResource(name: string, resource: (id: string) => any) {
+    resource(name);
+    return this;
+  }
+
+  getOutput(){
+    return {
+      mockOutput: 'mockOutput'
+    }
+  }
 }
 
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
+
+  protected readonly controller: ResourceController = new ResourceController();
+
   constructor(scope: Construct, options?: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
-    super(scope, id);
+    super(scope, id); 
   }
 
   static generateStackId<Config extends TerrakitStackConfig>(options?: TerrakitOptions<Config>): string {
@@ -47,9 +41,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
   }
 
   output(){
-    return {
-      mockOutput: 'mockOutput'
-    }
+    return this.controller.getOutput(); 
   }
 
 }
