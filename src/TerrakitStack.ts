@@ -23,7 +23,7 @@ export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitSt
 
 interface TerrakitStackConfig {
   identifier: object;
-  providers: Record<string, TerraformProvider>;
+  providers: object;
 }
 
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {

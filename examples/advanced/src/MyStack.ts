@@ -11,7 +11,7 @@ export interface MyIdentifiers {
   site: 'active' | 'dr';
 }
 
-export interface MyProviders extends BaseProviders {
+export interface MyProviders {
   defaultAzureProvider: AzurermProvider;
 }
 
