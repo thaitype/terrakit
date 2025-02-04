@@ -1,5 +1,6 @@
 import type { TerraformProvider } from "cdktf";
 import type { Construct } from "constructs";
+import type { ResourceController } from "./TerrakitStack.js";
 
 export type BaseProviders = Record<string, TerraformProvider>;
 
@@ -29,4 +30,6 @@ export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitSt
   providers?: Config['providers'];
 
   overrideResources?: object;
+
+  controller?: ResourceController;
 }

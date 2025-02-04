@@ -3,30 +3,71 @@ import { Construct } from "constructs";
 import { z } from "zod";
 import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
 
-export class ResourceController {
+export type ResourceArgs = {
+  id: string;
+  providers: Record<string, TerraformProvider>;
+  outputs: Record<string, any>;
+  scope: Construct;
+}
 
-  addResource(name: string, resource: (id: string) => any) {
-    resource(name);
-    return this;
+export class ResourceController<Resources extends Record<string, any> = {}> {
+
+  private resources: Record<string, any> = {};
+  private outputs: Record<string, any> = {};
+
+  constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) {
+  }
+
+  addResource<Id extends string, Return>(id: Id, resource: (args: ResourceArgs) => Return) {
+    this.resources[id] = resource;
+    // resource({
+    //   id,
+    //   scope: this.scope,
+    //   providers: this.providers,
+    //   outputs: {}
+    // });
+    return this as ResourceController<Resources & Record<Id, Return>>;
+  }
+
+  build() {
+    console.log('Building resources');
+    for (const [id, resource] of Object.entries(this.resources)) {
+      this.outputs[id] = resource({
+        id,
+        scope: this.scope,
+        providers: this.providers,
+        outputs: {}
+      });
+      console.log(`Built resource ${id}`);
+    }
+    return this as ResourceController<Resources>;
   }
 
   getOutput() {
-    return {
-      mockOutput: 'mockOutput'
-    }
+    return this.outputs as ResourceController<Resources>;
   }
 }
 
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
 
   providers!: Record<keyof Config['providers'], TerraformProvider>;
-  protected readonly controller: ResourceController = new ResourceController();
+  public readonly controller!: ResourceController;
 
   constructor(scope: Construct, options?: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
     super(scope, id);
-    if (options && options.providers) {
-      this.setupProviders(options);
+
+    if (!options) {
+      throw new Error('The options are required to initialize the TerrakitStack.');
+    }
+    if (options.controller) {
+      console.log('Initialized controller at TerrakitStack');
+      options.controller.build();
+      this.controller = options.controller;
+    } else if (options.providers) {
+      this.providers = TerrakitStack.setupProviders(this, options) as Record<keyof Config['providers'], TerraformProvider>;
+      console.log('Initialized providers at TerrakitStack');
+      this.controller = new ResourceController(scope, this.providers);
     }
   }
 
@@ -45,17 +86,18 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
   }
 
 
-  setupProviders(options: TerrakitOptions<Config>) {
-    if (!this.providers) {
-      (this.providers as {}) = {} as Record<string, any>;
-    }
+  static setupProviders(scope: Construct, options: TerrakitOptions) {
+    const providers: Record<string, any> = {}
     for (const [key, provider] of Object.entries(options.providers as Record<string, any>)) {
-      (this.providers as Record<string, any>)[key] = provider(this);
+      providers[key] = provider(scope);
     }
+    return providers;
   }
 
-  output() {
-    return this.controller.getOutput();
+  output<T extends Record<string, any> = {}>(controller: ResourceController<T>) {
+    // if (controller) {
+      return controller.getOutput();
+    // }
   }
 
 }
