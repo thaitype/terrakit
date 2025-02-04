@@ -38,7 +38,7 @@ export class TerrakitController<Resources extends Record<string, any> = {}> {
   }
 
   getOutput() {
-    return this.outputs as TerrakitController<Resources>;
+    return this.outputs as Resources;
   }
 }
 
@@ -90,7 +90,12 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
   }
 
   output<T extends Record<string, any> = {}>(controller: TerrakitController<T>) {
-    return controller.getOutput();
+    // Attach the controller to the stack
+    this.controller = controller;
+    return {
+      stack: this,
+      outputs: controller.getOutput()
+    }
   }
 
 }

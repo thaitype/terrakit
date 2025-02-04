@@ -1,4 +1,4 @@
-import { App, TerraformProvider } from "cdktf";
+import { App, TerraformOutput, TerraformProvider } from "cdktf";
 import { type BaseProviders, type CallbackProvider, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
 import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js';
@@ -60,7 +60,7 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
 // }
 
 export const createMyStack = (
-  scope: Construct, 
+  scope: Construct,
   options: SetRequired<TerrakitOptions<TerrakitStackConfig>, 'identifier' | 'providers'>
 ) => {
   // 1. First, create the stack:
@@ -78,12 +78,10 @@ export const createMyStack = (
     )
     .build();
 
-  // Attach that controller to the TerrakitStack so it can manage outputs:
-  // (If your TerrakitStack constructor does something special with controllers,
-  // you may pass in an updated options object, or just set it afterwards.)
-  myTerrakitStack.controller = controller;
+  new TerraformOutput(myTerrakitStack, "resource-group-name", {
+    value: controller.getOutput().aaa1.name
+  });
 
-  // 3. Return the actual TerrakitStack instance, not just the outputs:
-  return myTerrakitStack;
+  return myTerrakitStack.output(controller);
 };
 
