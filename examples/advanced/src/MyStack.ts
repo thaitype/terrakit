@@ -1,5 +1,5 @@
 import { App, TerraformProvider } from "cdktf";
-import { type BaseProviders, type CallbackProvider, ResourceController, type TerrakitOptions, TerrakitStack } from "terrakit";
+import { type BaseProviders, type CallbackProvider, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
 import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js';
 import { AzurermProvider } from "../.gen/providers/azurerm/provider/index.js";
@@ -68,7 +68,7 @@ export const createMyStack = (
 
   // 2. Create a controller that uses *myTerrakitStack* as the scope so
   //    that resources become children of the TerrakitStack:
-  const controller = new ResourceController(myTerrakitStack, myTerrakitStack.providers)
+  const controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
     .addResource('aaa1', ({ id, providers }) =>
       new ResourceGroup(myTerrakitStack, id, {
         provider: providers.defaultAzureProvider,

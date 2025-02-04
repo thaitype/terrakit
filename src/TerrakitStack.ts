@@ -10,7 +10,7 @@ export type ResourceArgs = {
   scope: Construct;
 }
 
-export class ResourceController<Resources extends Record<string, any> = {}> {
+export class TerrakitController<Resources extends Record<string, any> = {}> {
 
   private resources: Record<string, any> = {};
   private outputs: Record<string, any> = {};
@@ -20,7 +20,7 @@ export class ResourceController<Resources extends Record<string, any> = {}> {
 
   addResource<Id extends string, Return>(id: Id, resource: (args: ResourceArgs) => Return) {
     this.resources[id] = resource;
-    return this as ResourceController<Resources & Record<Id, Return>>;
+    return this as TerrakitController<Resources & Record<Id, Return>>;
   }
 
   build() {
@@ -34,18 +34,18 @@ export class ResourceController<Resources extends Record<string, any> = {}> {
       });
       console.log(`Built resource ${id}`);
     }
-    return this as ResourceController<Resources>;
+    return this as TerrakitController<Resources>;
   }
 
   getOutput() {
-    return this.outputs as ResourceController<Resources>;
+    return this.outputs as TerrakitController<Resources>;
   }
 }
 
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
 
   providers!: Record<keyof Config['providers'], TerraformProvider>;
-  public controller!: ResourceController;
+  public controller!: TerrakitController;
 
   constructor(scope: Construct, options?: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
@@ -62,7 +62,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     } else if (options.providers) {
       this.providers = TerrakitStack.setupProviders(this, options) as Record<keyof Config['providers'], TerraformProvider>;
       console.log('Initialized providers at TerrakitStack');
-      this.controller = new ResourceController(scope, this.providers);
+      this.controller = new TerrakitController(scope, this.providers);
     }
   }
 
@@ -89,7 +89,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     return providers;
   }
 
-  output<T extends Record<string, any> = {}>(controller: ResourceController<T>) {
+  output<T extends Record<string, any> = {}>(controller: TerrakitController<T>) {
     return controller.getOutput();
   }
 
