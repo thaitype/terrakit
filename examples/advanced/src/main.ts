@@ -3,7 +3,7 @@ import { createMyStack, MyStack } from "./MyStack.js";
 import { AzurermProvider } from '../.gen/providers/azurerm/provider/index.js';
 
 const app = new App();
-const myStack = new MyStack(app, {
+const myStack = createMyStack(app, {
   identifier: {
     env: 'prod',
     slot: 'prod',
@@ -20,9 +20,5 @@ const myStack = new MyStack(app, {
     }
   }
 });
-
-
-
-// console.log(`We can access the output from the stack: ${myStack.output().mockOutput}`);
 
 app.synth();

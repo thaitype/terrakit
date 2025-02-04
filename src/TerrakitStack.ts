@@ -20,12 +20,6 @@ export class ResourceController<Resources extends Record<string, any> = {}> {
 
   addResource<Id extends string, Return>(id: Id, resource: (args: ResourceArgs) => Return) {
     this.resources[id] = resource;
-    // resource({
-    //   id,
-    //   scope: this.scope,
-    //   providers: this.providers,
-    //   outputs: {}
-    // });
     return this as ResourceController<Resources & Record<Id, Return>>;
   }
 
@@ -51,7 +45,7 @@ export class ResourceController<Resources extends Record<string, any> = {}> {
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
 
   providers!: Record<keyof Config['providers'], TerraformProvider>;
-  public readonly controller!: ResourceController;
+  public controller!: ResourceController;
 
   constructor(scope: Construct, options?: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
@@ -64,6 +58,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
       console.log('Initialized controller at TerrakitStack');
       options.controller.build();
       this.controller = options.controller;
+
     } else if (options.providers) {
       this.providers = TerrakitStack.setupProviders(this, options) as Record<keyof Config['providers'], TerraformProvider>;
       console.log('Initialized providers at TerrakitStack');
@@ -95,9 +90,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
   }
 
   output<T extends Record<string, any> = {}>(controller: ResourceController<T>) {
-    // if (controller) {
-      return controller.getOutput();
-    // }
+    return controller.getOutput();
   }
 
 }
