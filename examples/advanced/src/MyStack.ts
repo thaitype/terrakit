@@ -4,6 +4,7 @@ import { Construct } from "constructs";
 import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js';
 import { AzurermProvider } from "../.gen/providers/azurerm/provider/index.js";
 import type { SetRequired } from 'type-fest';
+import { StorageAccount } from '../.gen/providers/azurerm/storage-account/index.js';
 
 export interface TerrakitStackConfig {
   identifier: {
@@ -22,7 +23,7 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
   constructor(scope: Construct, public readonly options: SetRequired<TerrakitOptions<TerrakitStackConfig>, 'identifier' | 'providers'>) {
     super(scope, options);
 
-    this.controller
+    const controller = this.controller
       .addResource('aaa1', ({ id }) => this.resourceGroup(id)).build();
   }
 
@@ -69,13 +70,21 @@ export const createMyStack = (
   // 2. Create a controller that uses *myTerrakitStack* as the scope so
   //    that resources become children of the TerrakitStack:
   const controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
-    .addResource('aaa1', ({ id, providers }) =>
+    .addResource('aaa1', ({ id, providers, outputs }) =>
       new ResourceGroup(myTerrakitStack, id, {
         provider: providers.defaultAzureProvider,
-        name: 'rg-' + id,
+        name: 'rg-' + id ,
         location: 'eastus'
       })
-    )
+    ).addResource('aaa2', ({ id, providers, outputs }) =>
+      new StorageAccount(myTerrakitStack, id, {
+        provider: providers.defaultAzureProvider,
+        name: 'sa' + id,
+        resourceGroupName: outputs.aaa1.name,
+        location: 'eastus',
+        accountReplicationType: 'LRS',
+        accountTier: 'Standard'
+      }))
     .build();
 
   new TerraformOutput(myTerrakitStack, "resource-group-name", {
