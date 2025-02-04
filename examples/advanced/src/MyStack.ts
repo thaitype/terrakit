@@ -1,5 +1,5 @@
-import { App, TerraformProvider } from "cdktf";
-import { type BaseProviders, type CallbackProvider, type TerrakitOptions, TerrakitStack } from "terrakit";
+import { App, TerraformOutput, TerraformProvider } from "cdktf";
+import { type BaseProviders, type CallbackProvider, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
 import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js';
 import { AzurermProvider } from "../.gen/providers/azurerm/provider/index.js";
@@ -23,8 +23,7 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
     super(scope, options);
 
     this.controller
-      .addResource('aaa1', (id) => this.resourceGroup(id))
-      .addResource('bbb2', (id) => this.resourceGroup(id))
+      .addResource('aaa1', ({ id }) => this.resourceGroup(id)).build();
   }
 
   resourceGroup(id: string) {
@@ -37,4 +36,52 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
 
 
 }
+
+// export const createMyStack = (scope: Construct, options: SetRequired<TerrakitOptions<TerrakitStackConfig>, 'identifier' | 'providers'>) => {
+//   // return new TerrakitStack<TerrakitStackConfig>(scope, options).controller
+//   //   .addResource('aaa1', ({ id, providers, scope }) => new ResourceGroup(scope, id, {
+//   //     provider: providers.defaultAzureProvider,
+//   //     // provider: new AzurermProvider(scope, "azurerm_provider_default", {}),
+//   //     name: 'rg-' + id,
+//   //     location: 'eastus'
+//   //   }))
+
+//   const controller = new ResourceController(scope, TerrakitStack.setupProviders(scope, options))
+//     .addResource('aaa1', ({ id, providers }) => new ResourceGroup(scope, id, {
+//       provider: providers.defaultAzureProvider,
+//       name: 'rg-' + id,
+//       location: 'eastus'
+//     }));
+//   return new TerrakitStack(scope, {
+//     ...options,
+//     controller
+//   }).output(controller);
+
+// }
+
+export const createMyStack = (
+  scope: Construct,
+  options: SetRequired<TerrakitOptions<TerrakitStackConfig>, 'identifier' | 'providers'>
+) => {
+  // 1. First, create the stack:
+  const myTerrakitStack = new TerrakitStack(scope, options);
+
+  // 2. Create a controller that uses *myTerrakitStack* as the scope so
+  //    that resources become children of the TerrakitStack:
+  const controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
+    .addResource('aaa1', ({ id, providers }) =>
+      new ResourceGroup(myTerrakitStack, id, {
+        provider: providers.defaultAzureProvider,
+        name: 'rg-' + id,
+        location: 'eastus'
+      })
+    )
+    .build();
+
+  new TerraformOutput(myTerrakitStack, "resource-group-name", {
+    value: controller.getOutput().aaa1.name
+  });
+
+  return myTerrakitStack.output(controller);
+};
 

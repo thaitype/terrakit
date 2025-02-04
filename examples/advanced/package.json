@@ -7,6 +7,7 @@
     "get": "bunx cdktf-cli get",
     "build": "tsc",
     "synth": "bunx cdktf-cli synth",
+    "deploy": "bunx cdktf-cli deploy",
     "compile": "tsc --pretty",
     "watch": "tsc -w",
     "test": "bun test",
