@@ -126,7 +126,7 @@ export class Terrakit<Config extends TerrakitStackConfig> {
     return this;
   }
 
-  overrideController(arg: any) {
+  overrideResources(arg: any) {
     return this;
   }
 
@@ -160,7 +160,7 @@ export const createController = (scope: Construct, stack: TerrakitStack<MyTerrak
 const myTerrakitStack = new TerrakitStack<MyTerrakitStackConfig>(app, {} as any);
 const stack = new Terrakit(myTerrakitStack)
   .setController(createController)
-  .overrideController({
+  .overrideResources({
     aaa1: {
       name: 'new-resource-group-name'
     }
