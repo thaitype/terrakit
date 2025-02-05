@@ -41,69 +41,69 @@ export class MyStackOriginal extends TerrakitStack<MyTerrakitStackConfig> {
 }
 
 
-export function createMyStackOld(
-  scope: Construct,
-  options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
-) {
-  // 1. First, create the stack:
-  const myTerrakitStack = new TerrakitStack(scope, options);
+// export function createMyStackOld(
+//   scope: Construct,
+//   options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
+// ) {
+//   // 1. First, create the stack:
+//   const myTerrakitStack = new TerrakitStack(scope, options);
 
-  let controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
-    .resource({
-      id: 'aaa1',
-      resource: ({ id, providers, outputs }) =>
-        new ResourceGroup(myTerrakitStack, id, {
-          provider: providers.defaultAzureProvider,
-          name: 'rg-' + id,
-          location: 'eastus'
-        })
-    })
-    .resource({
-      id: 'aaa2',
-      resource: ({ id, providers, outputs }) =>
-        new StorageAccount(myTerrakitStack, id, {
-          provider: providers.defaultAzureProvider,
-          name: 'sa' + id,
-          resourceGroupName: outputs.aaa1.name,
-          location: 'eastus',
-          accountReplicationType: 'LRS',
-          accountTier: 'Standard'
-        })
-    })
-    .resource({
-      id: 'aaa3',
-      if: options.identifier.env === 'prod',
-      resource: ({ id, providers, outputs }) =>
-        new StorageAccount(myTerrakitStack, id, {
-          provider: providers.defaultAzureProvider,
-          name: 'sa' + id,
-          resourceGroupName: outputs.aaa2.accessTier,
-          location: 'eastus',
-          accountReplicationType: 'LRS',
-          accountTier: 'Standard'
-        })
-    })
-    .resource({
-      id: 'aaa4',
-      resource: ({ id, providers, outputs }) =>
-        new StorageAccount(myTerrakitStack, id, {
-          provider: providers.defaultAzureProvider,
-          name: 'sa' + id,
-          resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
-          location: 'eastus',
-          accountReplicationType: 'LRS',
-          accountTier: 'Standard'
-        })
-    });
+//   let controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
+//     .resource({
+//       id: 'aaa1',
+//       resource: ({ id, providers, outputs }) =>
+//         new ResourceGroup(myTerrakitStack, id, {
+//           provider: providers.defaultAzureProvider,
+//           name: 'rg-' + id,
+//           location: 'eastus'
+//         })
+//     })
+//     .resource({
+//       id: 'aaa2',
+//       resource: ({ id, providers, outputs }) =>
+//         new StorageAccount(myTerrakitStack, id, {
+//           provider: providers.defaultAzureProvider,
+//           name: 'sa' + id,
+//           resourceGroupName: outputs.aaa1.name,
+//           location: 'eastus',
+//           accountReplicationType: 'LRS',
+//           accountTier: 'Standard'
+//         })
+//     })
+//     .resource({
+//       id: 'aaa3',
+//       if: options.identifier.env === 'prod',
+//       resource: ({ id, providers, outputs }) =>
+//         new StorageAccount(myTerrakitStack, id, {
+//           provider: providers.defaultAzureProvider,
+//           name: 'sa' + id,
+//           resourceGroupName: outputs.aaa2.accessTier,
+//           location: 'eastus',
+//           accountReplicationType: 'LRS',
+//           accountTier: 'Standard'
+//         })
+//     })
+//     .resource({
+//       id: 'aaa4',
+//       resource: ({ id, providers, outputs }) =>
+//         new StorageAccount(myTerrakitStack, id, {
+//           provider: providers.defaultAzureProvider,
+//           name: 'sa' + id,
+//           resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
+//           location: 'eastus',
+//           accountReplicationType: 'LRS',
+//           accountTier: 'Standard'
+//         })
+//     });
 
-  controller.build();
+//   controller.build();
 
-  new TerraformOutput(myTerrakitStack, "resource-group-name", {
-    value: controller.outputs.aaa1.name
-  });
+//   new TerraformOutput(myTerrakitStack, "resource-group-name", {
+//     value: controller.outputs.aaa1.name
+//   });
 
-  return myTerrakitStack.output(controller);
-};
+//   return myTerrakitStack.output(controller);
+// };
 
 
 
@@ -117,52 +117,52 @@ export function createMyStackOld(
 
 export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
   return new TerrakitController(stack, stack.providers)
-  .resource({
-    id: 'aaa1',
-    resource: ({ id, providers, outputs }) =>
-      new ResourceGroup(stack, id, {
+    .resourceV2({
+      id: 'aaa1',
+      type: ResourceGroup,
+      config: ({ providers }) => ({
         provider: providers.defaultAzureProvider,
-        name: 'rg-' + id,
+        name: 'rg-' + 'aaa1',
         location: 'eastus'
-      })
-  })
-  .resource({
-    id: 'aaa2',
-    resource: ({ id, providers, outputs }) =>
-      new StorageAccount(stack, id, {
+      }),
+    })
+    .resourceV2({
+      id: 'aaa2',
+      type: StorageAccount,
+      config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,
-        name: 'sa' + id,
+        name: 'sa' + 'aaa2',
         resourceGroupName: outputs.aaa1.name,
         location: 'eastus',
         accountReplicationType: 'LRS',
         accountTier: 'Standard'
-      })
-  })
-  .resource({
-    id: 'aaa3',
-    if: stack.options.identifier.env === 'prod',
-    resource: ({ id, providers, outputs }) =>
-      new StorageAccount(stack, id, {
+      }),
+    })
+    .resourceV2({
+      id: 'aaa3',
+      if: stack.options.identifier.env === 'prod',
+      type: StorageAccount,
+      config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,
-        name: 'sa' + id,
+        name: 'sa' + 'aaa3',
         resourceGroupName: outputs.aaa2.accessTier,
         location: 'eastus',
         accountReplicationType: 'LRS',
         accountTier: 'Standard'
-      })
-  })
-  .resource({
-    id: 'aaa4',
-    resource: ({ id, providers, outputs }) =>
-      new StorageAccount(stack, id, {
+      }),
+    })
+    .resourceV2({
+      id: 'aaa4',
+      type: StorageAccount,
+      config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,
-        name: 'sa' + id,
+        name: 'sa' + 'aaa4',
         resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
         location: 'eastus',
         accountReplicationType: 'LRS',
         accountTier: 'Standard'
-      })
-  });
+      }),
+    });
 
 }
 
