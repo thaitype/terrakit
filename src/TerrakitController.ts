@@ -44,11 +44,11 @@ export class TerrakitController<Configs extends Record<string, unknown> = {}, Ou
   }
 
 
-  // resourceV2<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return })
-  //   : TerrakitController<Resources & Record<Id, Return>>;
+  resourceV2<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2] })
+    : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Record<Id, InstanceType<ResourceType>>>;
 
-  // resourceV2<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if: boolean })
-  //   : TerrakitController<Resources & Partial<Record<Id, Return>>>;
+  resourceV2<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if: boolean })
+    : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Partial<Record<Id, InstanceType<ResourceType>>>>;
 
   /**
    * Add a resource to the controller
