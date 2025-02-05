@@ -33,6 +33,19 @@ export class TerrakitController<Resources extends Record<string, any> = {}> {
     return this as TerrakitController<Resources & Record<Id, Return>>;
   }
 
+  resourceV2<Id extends string, Return>(args: { id: Id, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Record<Id, Return>>;
+  resourceV2<Id extends string, Return>(args: { id: Id, if: boolean, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Partial<Record<Id, Return>>>;
+
+  /**
+   * Add a resource to the controller
+   */
+  resourceV2<Id extends string, Return>(
+    args: { id: Id, resource: (args: ResourceArgs<Resources>) => Return } | { id: Id, if: boolean, resource: (args: ResourceArgs<Resources>) => Return }
+  ) {
+    // TODO: 
+    return this as TerrakitController<Resources & Record<Id, Return>>;
+  }
+
   build() {
     console.log('Building resources');
     for (const [id, resource] of Object.entries(this.resources)) {

@@ -69,7 +69,7 @@ export const createMyStack = (
 
   // 2. Create a controller that uses *myTerrakitStack* as the scope so
   //    that resources become children of the TerrakitStack:
-  let controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
+  let controller1 = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
     .resource('aaa1', ({ id, providers, outputs }) =>
       new ResourceGroup(myTerrakitStack, id, {
         provider: providers.defaultAzureProvider,
@@ -106,12 +106,62 @@ export const createMyStack = (
         accountTier: 'Standard'
       }));
 
-  controller.build();
+  // controller1.build();
+
+  let controller2 = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
+    .resourceV2({
+      id: 'aaa1',
+      resource: ({ id, providers, outputs }) =>
+        new ResourceGroup(myTerrakitStack, id, {
+          provider: providers.defaultAzureProvider,
+          name: 'rg-' + id,
+          location: 'eastus'
+        })
+    })
+    .resourceV2({
+      id: 'aaa2',
+      resource: ({ id, providers, outputs }) =>
+        new StorageAccount(myTerrakitStack, id, {
+          provider: providers.defaultAzureProvider,
+          name: 'sa' + id,
+          resourceGroupName: outputs.aaa1.name,
+          location: 'eastus',
+          accountReplicationType: 'LRS',
+          accountTier: 'Standard'
+        })
+    })
+    .resourceV2({
+      id: 'aaa3',
+      if: options.identifier.env === 'prod',
+      resource: ({ id, providers, outputs }) =>
+        new StorageAccount(myTerrakitStack, id, {
+          provider: providers.defaultAzureProvider,
+          name: 'sa' + id,
+          resourceGroupName: outputs.aaa2.accessTier,
+          location: 'eastus',
+          accountReplicationType: 'LRS',
+          accountTier: 'Standard'
+        })
+    })
+    .resourceV2({
+      id: 'aaa4',
+      resource: ({ id, providers, outputs }) =>
+        new StorageAccount(myTerrakitStack, id, {
+          provider: providers.defaultAzureProvider,
+          name: 'sa' + id,
+          resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
+          location: 'eastus',
+          accountReplicationType: 'LRS',
+          accountTier: 'Standard'
+        })
+    });
+
+  controller2.build();
 
   new TerraformOutput(myTerrakitStack, "resource-group-name", {
-    value: controller.getOutput().aaa1.name
+    value: controller1.getOutput().aaa1.name
   });
 
-  return myTerrakitStack.output(controller);
+  return myTerrakitStack.output(controller1);
 };
 
