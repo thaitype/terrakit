@@ -24,7 +24,7 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
     super(scope, options);
 
     const controller = this.controller
-      .addResource('aaa1', ({ id }) => this.resourceGroup(id)).build();
+      .resource('aaa1', ({ id }) => this.resourceGroup(id)).build();
   }
 
   resourceGroup(id: string) {
@@ -70,13 +70,13 @@ export const createMyStack = (
   // 2. Create a controller that uses *myTerrakitStack* as the scope so
   //    that resources become children of the TerrakitStack:
   const controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
-    .addResource('aaa1', ({ id, providers, outputs }) =>
+    .resource('aaa1', ({ id, providers, outputs }) =>
       new ResourceGroup(myTerrakitStack, id, {
         provider: providers.defaultAzureProvider,
         name: 'rg-' + id ,
         location: 'eastus'
       })
-    ).addResource('aaa2', ({ id, providers, outputs }) =>
+    ).resource('aaa2', ({ id, providers, outputs }) =>
       new StorageAccount(myTerrakitStack, id, {
         provider: providers.defaultAzureProvider,
         name: 'sa' + id,

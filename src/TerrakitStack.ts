@@ -3,7 +3,7 @@ import { Construct } from "constructs";
 import { z } from "zod";
 import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
 
-export type ResourceArgs<Outputs extends  Record<string, any>> = {
+export type ResourceArgs<Outputs extends Record<string, any>> = {
   id: string;
   providers: Record<string, TerraformProvider>;
   outputs: Outputs;
@@ -18,7 +18,10 @@ export class TerrakitController<Resources extends Record<string, any> = {}> {
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) {
   }
 
-  addResource<Id extends string, Return>(id: Id, resource: (args: ResourceArgs<Resources>) => Return) {
+  /**
+   * Add a resource to the controller
+   */
+  resource<Id extends string, Return>(id: Id, resource: (args: ResourceArgs<Resources>) => Return) {
     this.resources[id] = resource;
     return this as TerrakitController<Resources & Record<Id, Return>>;
   }
