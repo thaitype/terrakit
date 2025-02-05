@@ -12,8 +12,8 @@ export type ResourceArgs<Outputs extends Record<string, any>> = {
 
 export class TerrakitController<Resources extends Record<string, any> = {}> {
 
-  private resources: Record<string, any> = {};
-  private outputs: Record<string, any> = {};
+  private _resources: Record<string, any> = {};
+  private _outputs: Record<string, any> = {};
 
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) {}
 
@@ -34,20 +34,20 @@ export class TerrakitController<Resources extends Record<string, any> = {}> {
 
   build() {
     console.log('Building resources');
-    for (const [id, resource] of Object.entries(this.resources)) {
-      this.outputs[id] = resource({
+    for (const [id, resource] of Object.entries(this._resources)) {
+      this._outputs[id] = resource({
         id,
         scope: this.scope,
         providers: this.providers,
-        outputs: this.outputs
+        outputs: this._outputs
       });
       console.log(`Built resource ${id}`);
     }
     return this as TerrakitController<Resources>;
   }
 
-  getOutput() {
-    return this.outputs as Resources;
+  get outputs() {
+    return this._outputs as Resources;
   }
 }
 
@@ -103,7 +103,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     this.controller = controller;
     return {
       stack: this,
-      outputs: controller.getOutput()
+      outputs: controller.outputs
     }
   }
 

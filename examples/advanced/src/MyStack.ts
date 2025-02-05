@@ -119,7 +119,7 @@ export const createMyStack = (
   controller.build();
 
   new TerraformOutput(myTerrakitStack, "resource-group-name", {
-    value: controller.getOutput().aaa1.name
+    value: controller.outputs.aaa1.name
   });
 
   return myTerrakitStack.output(controller);
