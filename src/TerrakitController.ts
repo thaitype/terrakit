@@ -26,9 +26,7 @@ export class TerrakitController<Resources extends Record<string, unknown> = {}> 
    * Add a resource to the controller
    */
   resource<Id extends string, Return>(
-    args:
-      | { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return }
-      | { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if: boolean, }
+    args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if?: boolean, }
   ) {
     // this.resources[id] = resource;
     // TODO: 
