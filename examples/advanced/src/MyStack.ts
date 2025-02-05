@@ -1,11 +1,11 @@
 import { App, TerraformOutput, TerraformProvider } from "cdktf";
 import { type BaseProviders, type CallbackProvider, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
-import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js';
-import { AzurermProvider } from "../.gen/providers/azurerm/provider/index.js";
 import type { SetRequired } from 'type-fest';
-import { StorageAccount } from '../.gen/providers/azurerm/storage-account/index.js';
-// import { storageAccount } from '@cdktf/provider-azurerm';
+import { storageAccount, resourceGroup } from '@cdktf/provider-azurerm';
+
+const { StorageAccount } = storageAccount;
+const { ResourceGroup } = resourceGroup;
 
 export interface TerrakitStackConfig {
   identifier: {
@@ -60,10 +60,10 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
 
 // }
 
-export const createMyStack = (
+export function createMyStack(
   scope: Construct,
   options: SetRequired<TerrakitOptions<TerrakitStackConfig>, 'identifier' | 'providers'>
-) => {
+) {
   // 1. First, create the stack:
   const myTerrakitStack = new TerrakitStack(scope, options);
 
