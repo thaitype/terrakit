@@ -24,16 +24,16 @@ export class TerrakitController<Configs extends Record<string, unknown> = {}, Ou
 
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) { }
 
-  resource<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2] })
+  add<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2] })
     : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Record<Id, InstanceType<ResourceType>>>;
 
-  resource<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if: boolean })
+  add<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if: boolean })
     : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Partial<Record<Id, InstanceType<ResourceType>>>>;
 
   /**
    * Add a resource to the controller
    */
-  resource<Id extends string, ResourceType extends AnyClass>(
+  add<Id extends string, ResourceType extends AnyClass>(
     args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if?: boolean }
   ) {
     if (args.if === true || args.if === undefined) {
