@@ -117,22 +117,60 @@ export function createMyStackOld(
 
 export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
   return new TerrakitController(stack, stack.providers)
-    .resource({
-      id: 'aaa1',
-      resource: ({ id, providers, outputs }) =>
-        new ResourceGroup(stack, id, {
-          provider: providers.defaultAzureProvider,
-          name: 'rg-' + id,
-          location: 'eastus'
-        })
-    })
+  .resource({
+    id: 'aaa1',
+    resource: ({ id, providers, outputs }) =>
+      new ResourceGroup(stack, id, {
+        provider: providers.defaultAzureProvider,
+        name: 'rg-' + id,
+        location: 'eastus'
+      })
+  })
+  .resource({
+    id: 'aaa2',
+    resource: ({ id, providers, outputs }) =>
+      new StorageAccount(stack, id, {
+        provider: providers.defaultAzureProvider,
+        name: 'sa' + id,
+        resourceGroupName: outputs.aaa1.name,
+        location: 'eastus',
+        accountReplicationType: 'LRS',
+        accountTier: 'Standard'
+      })
+  })
+  .resource({
+    id: 'aaa3',
+    if: stack.options.identifier.env === 'prod',
+    resource: ({ id, providers, outputs }) =>
+      new StorageAccount(stack, id, {
+        provider: providers.defaultAzureProvider,
+        name: 'sa' + id,
+        resourceGroupName: outputs.aaa2.accessTier,
+        location: 'eastus',
+        accountReplicationType: 'LRS',
+        accountTier: 'Standard'
+      })
+  })
+  .resource({
+    id: 'aaa4',
+    resource: ({ id, providers, outputs }) =>
+      new StorageAccount(stack, id, {
+        provider: providers.defaultAzureProvider,
+        name: 'sa' + id,
+        resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
+        location: 'eastus',
+        accountReplicationType: 'LRS',
+        accountTier: 'Standard'
+      })
+  });
+
 }
 
 export function createMyStack(
   scope: Construct,
   options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
 ) {
-  const terrakitStack = new TerrakitStack(scope, options);
+  const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
   return new Terrakit(terrakitStack)
     .setController(createController)
 }
