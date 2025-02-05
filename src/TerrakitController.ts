@@ -36,9 +36,6 @@ export class TerrakitController<Configs extends Record<string, unknown> = {}, Ou
   resource<Id extends string, ResourceType extends AnyClass>(
     args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if?: boolean }
   ) {
-    // if(!(args.type instanceof TerraformResource)) {
-    //   throw new Error('The type must be a TerraformResource');
-    // }
     if (args.if === true || args.if === undefined) {
       this._resources[args.id] = (args1: ResourceV2CallbackArgs<Outputs>) => {
         return new args.type(this.scope, args.id, args.config(args1));

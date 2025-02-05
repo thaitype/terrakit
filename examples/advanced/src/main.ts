@@ -1,8 +1,6 @@
 import { App, TerraformOutput } from "cdktf";
 import { createMyStack } from "./MyStack.js";
-import { provider } from '@cdktf/provider-azurerm';
-
-const { AzurermProvider } = provider;
+import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
 
 const app = new App();
 const myStack = createMyStack(app, {

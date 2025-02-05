@@ -2,12 +2,8 @@ import { App, TerraformOutput, TerraformProvider } from "cdktf";
 import { type BaseProviders, type CallbackProvider, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
 import { Construct } from "constructs";
 import type { SetRequired } from 'type-fest';
-import { storageAccount, resourceGroup, provider } from '@cdktf/provider-azurerm';
-// import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
-
-const { StorageAccount } = storageAccount;
-const { ResourceGroup } = resourceGroup;
-const { AzurermProvider } = provider;
+import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
+import { StorageAccount } from "@cdktf/provider-azurerm/lib/storage-account/index.js";
 
 export interface MyTerrakitStackConfig {
   identifier: {
@@ -160,7 +156,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
         resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
         location: 'eastus',
         accountReplicationType: 'LRS',
-        accountTier: 'Standard'
+        accountTier: 'Standard',
       }),
     });
 
