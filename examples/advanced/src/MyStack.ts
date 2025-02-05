@@ -69,14 +69,14 @@ export const createMyStack = (
 
   // 2. Create a controller that uses *myTerrakitStack* as the scope so
   //    that resources become children of the TerrakitStack:
-  const controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
+  let controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
     .resource('aaa1', ({ id, providers, outputs }) =>
       new ResourceGroup(myTerrakitStack, id, {
         provider: providers.defaultAzureProvider,
-        name: 'rg-' + id ,
+        name: 'rg-' + id,
         location: 'eastus'
-      })
-    ).resource('aaa2', ({ id, providers, outputs }) =>
+      }))
+    .resource('aaa2', ({ id, providers, outputs }) =>
       new StorageAccount(myTerrakitStack, id, {
         provider: providers.defaultAzureProvider,
         name: 'sa' + id,
@@ -85,7 +85,28 @@ export const createMyStack = (
         accountReplicationType: 'LRS',
         accountTier: 'Standard'
       }))
-    .build();
+    .resource('aaa3',
+      options.identifier.env === 'prod',
+      ({ id, providers, outputs }) =>
+        new StorageAccount(myTerrakitStack, id, {
+          provider: providers.defaultAzureProvider,
+          name: 'sa' + id,
+          resourceGroupName: outputs.aaa2.accessTier,
+          location: 'eastus',
+          accountReplicationType: 'LRS',
+          accountTier: 'Standard'
+        }))
+    .resource('aaa4', ({ id, providers, outputs }) =>
+      new StorageAccount(myTerrakitStack, id, {
+        provider: providers.defaultAzureProvider,
+        name: 'sa' + id,
+        resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
+        location: 'eastus',
+        accountReplicationType: 'LRS',
+        accountTier: 'Standard'
+      }));
+
+  controller.build();
 
   new TerraformOutput(myTerrakitStack, "resource-group-name", {
     value: controller.getOutput().aaa1.name
