@@ -28,8 +28,9 @@ export class TerrakitController<Resources extends Record<string, unknown> = {}> 
   resource<Id extends string, Return>(
     args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if?: boolean, }
   ) {
-    // this.resources[id] = resource;
-    // TODO: 
+    if (args.if === true || args.if === undefined) {
+      this._resources[args.id] = args.resource;
+    }
     return this as TerrakitController<Resources & Record<Id, Return>>;
   }
 
