@@ -17,31 +17,17 @@ export class TerrakitController<Resources extends Record<string, any> = {}> {
 
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) {}
 
-  resource<Id extends string, Return>(id: Id, resource: (args: ResourceArgs<Resources>) => Return): TerrakitController<Resources & Record<Id, Return>>;
-  resource<Id extends string, Return>(id: Id, condition: boolean, resource: (args: ResourceArgs<Resources>) => Return): TerrakitController<Resources & Partial<Record<Id, Return>>>;
+
+  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Record<Id, Return>>;
+  resource<Id extends string, Return>(args: { id: Id, if: boolean, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Partial<Record<Id, Return>>>;
 
   /**
    * Add a resource to the controller
    */
   resource<Id extends string, Return>(
-    id: Id,
-    resourceOrCondition: boolean | ((args: ResourceArgs<Resources>) => Return),
-    maybeResource?: (args: ResourceArgs<Resources>) => Return
-  ) {
-    // this.resources[id] = resource;
-    // TODO: 
-    return this as TerrakitController<Resources & Record<Id, Return>>;
-  }
-
-  resourceV2<Id extends string, Return>(args: { id: Id, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Record<Id, Return>>;
-  resourceV2<Id extends string, Return>(args: { id: Id, if: boolean, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Partial<Record<Id, Return>>>;
-
-  /**
-   * Add a resource to the controller
-   */
-  resourceV2<Id extends string, Return>(
     args: { id: Id, resource: (args: ResourceArgs<Resources>) => Return } | { id: Id, if: boolean, resource: (args: ResourceArgs<Resources>) => Return }
   ) {
+    // this.resources[id] = resource;
     // TODO: 
     return this as TerrakitController<Resources & Record<Id, Return>>;
   }

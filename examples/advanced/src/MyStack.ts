@@ -5,6 +5,7 @@ import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js
 import { AzurermProvider } from "../.gen/providers/azurerm/provider/index.js";
 import type { SetRequired } from 'type-fest';
 import { StorageAccount } from '../.gen/providers/azurerm/storage-account/index.js';
+// import { storageAccount } from '@cdktf/provider-azurerm';
 
 export interface TerrakitStackConfig {
   identifier: {
@@ -24,17 +25,16 @@ export class MyStack extends TerrakitStack<TerrakitStackConfig> {
     super(scope, options);
 
     const controller = this.controller
-      .resource('aaa1', ({ id }) => this.resourceGroup(id)).build();
+      .resource({
+        id: 'aaa1',
+        resource: ({ id, providers }) =>
+          new ResourceGroup(this, id, {
+            provider: providers.defaultAzureProvider,
+            name: 'rg-' + id,
+            location: 'eastus'
+          })
+      }).build();
   }
-
-  resourceGroup(id: string) {
-    return new ResourceGroup(this, id, {
-      provider: this.providers.defaultAzureProvider,
-      name: 'rg-' + id,
-      location: 'eastus'
-    });
-  }
-
 
 }
 
@@ -67,49 +67,9 @@ export const createMyStack = (
   // 1. First, create the stack:
   const myTerrakitStack = new TerrakitStack(scope, options);
 
-  // 2. Create a controller that uses *myTerrakitStack* as the scope so
-  //    that resources become children of the TerrakitStack:
-  let controller1 = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
-    .resource('aaa1', ({ id, providers, outputs }) =>
-      new ResourceGroup(myTerrakitStack, id, {
-        provider: providers.defaultAzureProvider,
-        name: 'rg-' + id,
-        location: 'eastus'
-      }))
-    .resource('aaa2', ({ id, providers, outputs }) =>
-      new StorageAccount(myTerrakitStack, id, {
-        provider: providers.defaultAzureProvider,
-        name: 'sa' + id,
-        resourceGroupName: outputs.aaa1.name,
-        location: 'eastus',
-        accountReplicationType: 'LRS',
-        accountTier: 'Standard'
-      }))
-    .resource('aaa3',
-      options.identifier.env === 'prod',
-      ({ id, providers, outputs }) =>
-        new StorageAccount(myTerrakitStack, id, {
-          provider: providers.defaultAzureProvider,
-          name: 'sa' + id,
-          resourceGroupName: outputs.aaa2.accessTier,
-          location: 'eastus',
-          accountReplicationType: 'LRS',
-          accountTier: 'Standard'
-        }))
-    .resource('aaa4', ({ id, providers, outputs }) =>
-      new StorageAccount(myTerrakitStack, id, {
-        provider: providers.defaultAzureProvider,
-        name: 'sa' + id,
-        resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
-        location: 'eastus',
-        accountReplicationType: 'LRS',
-        accountTier: 'Standard'
-      }));
 
-  // controller1.build();
-
-  let controller2 = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
-    .resourceV2({
+  let controller = new TerrakitController(myTerrakitStack, myTerrakitStack.providers)
+    .resource({
       id: 'aaa1',
       resource: ({ id, providers, outputs }) =>
         new ResourceGroup(myTerrakitStack, id, {
@@ -118,7 +78,7 @@ export const createMyStack = (
           location: 'eastus'
         })
     })
-    .resourceV2({
+    .resource({
       id: 'aaa2',
       resource: ({ id, providers, outputs }) =>
         new StorageAccount(myTerrakitStack, id, {
@@ -130,7 +90,7 @@ export const createMyStack = (
           accountTier: 'Standard'
         })
     })
-    .resourceV2({
+    .resource({
       id: 'aaa3',
       if: options.identifier.env === 'prod',
       resource: ({ id, providers, outputs }) =>
@@ -143,7 +103,7 @@ export const createMyStack = (
           accountTier: 'Standard'
         })
     })
-    .resourceV2({
+    .resource({
       id: 'aaa4',
       resource: ({ id, providers, outputs }) =>
         new StorageAccount(myTerrakitStack, id, {
@@ -156,12 +116,12 @@ export const createMyStack = (
         })
     });
 
-  controller2.build();
+  controller.build();
 
   new TerraformOutput(myTerrakitStack, "resource-group-name", {
-    value: controller1.getOutput().aaa1.name
+    value: controller.getOutput().aaa1.name
   });
 
-  return myTerrakitStack.output(controller1);
+  return myTerrakitStack.output(controller);
 };
 
