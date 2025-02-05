@@ -2,21 +2,22 @@ import type { Construct } from "constructs";
 import type { TerrakitStack } from "./TerrakitStack.js";
 import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
 import type { TerrakitController } from "./TerrakitController.js";
+import type { PartialDeep } from "type-fest";
 
-export class Terrakit<Config extends TerrakitStackConfig, Output = {}> {
+export class Terrakit<StackConfig extends TerrakitStackConfig, Configs extends Record<string, unknown> = {}, Outputs extends Record<string, unknown> = {}> {
 
   public controller: TerrakitController<any> | undefined;
 
-  constructor(public readonly stack: TerrakitStack<Config>) {
+  constructor(public readonly stack: TerrakitStack<StackConfig>) {
   }
 
-  setController<Configs extends Record<string, unknown>, Outputs extends Record<string, unknown>>(callbackController: (stack: TerrakitStack<Config>) => TerrakitController<Configs, Outputs>) {
+  setController<Configs extends Record<string, unknown>, Outputs extends Record<string, unknown>>(callbackController: (stack: TerrakitStack<StackConfig>) => TerrakitController<Configs, Outputs>) {
     console.log('Defining resources');
     this.controller = callbackController(this.stack);
-    return this as Terrakit<Config, Configs>;
+    return this as unknown as Terrakit<StackConfig, Configs, Outputs>;
   }
 
-  overrideResources(arg: any) {
+  overrideResources(arg: PartialDeep<Configs>) {
     return this;
   }
 

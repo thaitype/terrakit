@@ -20,7 +20,12 @@ const myStack = createMyStack(app, {
     })
   },
 })
-.overrideResources({})
+.overrideResources({
+  aaa1: {
+    name: 'my-rg',
+    location: 'eastus'
+  },
+})
 .build();
 
 
