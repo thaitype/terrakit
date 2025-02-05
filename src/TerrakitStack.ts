@@ -3,24 +3,24 @@ import { Construct } from "constructs";
 import { z } from "zod";
 import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
 
-export interface ResourceCallbackArgs<Outputs extends Record<string, any>> {
+export interface ResourceCallbackArgs<Outputs extends Record<string, unknown>> {
   id: string;
   providers: Record<string, TerraformProvider>;
   outputs: Outputs;
   scope: Construct;
 }
 
-export class TerrakitController<Resources extends Record<string, any> = {}> {
+export class TerrakitController<Resources extends Record<string, unknown> = {}> {
 
-  private _resources: Record<string, any> = {};
-  private _outputs: Record<string, any> = {};
+  private _resources: Record<string, unknown> = {};
+  private _outputs: Record<string, unknown> = {};
 
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) { }
 
 
   resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return })
     : TerrakitController<Resources & Record<Id, Return>>;
-    
+
   resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if: boolean })
     : TerrakitController<Resources & Partial<Record<Id, Return>>>;
 
@@ -40,6 +40,9 @@ export class TerrakitController<Resources extends Record<string, any> = {}> {
   build() {
     console.log('Building resources');
     for (const [id, resource] of Object.entries(this._resources)) {
+      if (typeof resource !== 'function') {
+        throw new Error('The resource must be a function');
+      }
       this._outputs[id] = resource({
         id,
         scope: this.scope,
