@@ -3,7 +3,7 @@ import { Construct } from "constructs";
 import { z } from "zod";
 import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
 
-export type ResourceArgs<Outputs extends Record<string, any>> = {
+export interface ResourceCallbackArgs<Outputs extends Record<string, any>> {
   id: string;
   providers: Record<string, TerraformProvider>;
   outputs: Outputs;
@@ -15,17 +15,22 @@ export class TerrakitController<Resources extends Record<string, any> = {}> {
   private _resources: Record<string, any> = {};
   private _outputs: Record<string, any> = {};
 
-  constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) {}
+  constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) { }
 
 
-  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Record<Id, Return>>;
-  resource<Id extends string, Return>(args: { id: Id, if: boolean, resource: (args: ResourceArgs<Resources>) => Return }): TerrakitController<Resources & Partial<Record<Id, Return>>>;
+  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return })
+    : TerrakitController<Resources & Record<Id, Return>>;
+    
+  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if: boolean })
+    : TerrakitController<Resources & Partial<Record<Id, Return>>>;
 
   /**
    * Add a resource to the controller
    */
   resource<Id extends string, Return>(
-    args: { id: Id, resource: (args: ResourceArgs<Resources>) => Return } | { id: Id, if: boolean, resource: (args: ResourceArgs<Resources>) => Return }
+    args:
+      | { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return }
+      | { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if: boolean, }
   ) {
     // this.resources[id] = resource;
     // TODO: 
