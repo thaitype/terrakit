@@ -10,7 +10,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
   providers!: Record<keyof Config['providers'], TerraformProvider>;
   public controller!: TerrakitController;
 
-  constructor(public readonly scope: Construct, options?: TerrakitOptions<Config>) {
+  constructor(scope: Construct, options?: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
     super(scope, id);
 

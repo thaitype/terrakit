@@ -1,5 +1,5 @@
 import { App, TerraformOutput, TerraformProvider } from "cdktf";
-import { type BaseProviders, type CallbackProvider, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
+import { type BaseProviders, type CallbackProvider, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
 import { Construct } from "constructs";
 import type { SetRequired } from 'type-fest';
 import { storageAccount, resourceGroup, provider } from '@cdktf/provider-azurerm';
@@ -41,7 +41,7 @@ export class MyStackOriginal extends TerrakitStack<MyTerrakitStackConfig> {
 }
 
 
-export function createMyStack(
+export function createMyStackOld(
   scope: Construct,
   options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
 ) {
@@ -105,51 +105,22 @@ export function createMyStack(
   return myTerrakitStack.output(controller);
 };
 
-// export abstract class Terrakit {
-//   constructor() {}
 
-//   build() { 
-//     console.log('Building');
-//   }
 
-//   abstract defineResources(controller: TerrakitController): void;
+// const app = new App();
+// const defaultProvider = new AzurermProvider(app, "azurerm_provider_default", {
+//   // skipProviderRegistration: true,
+//   resourceProviderRegistrations: 'core',
+//   subscriptionId: '00000000-0000-0000-0000-000000000000',
+//   features: [{}]
+// });
 
-// }
-
-export class Terrakit<Config extends TerrakitStackConfig> {
-  constructor(public readonly stack: TerrakitStack<Config>) {
-  }
-
-  setController<T extends Record<string, unknown>>(callbackController: (scope: Construct, stack: TerrakitStack<Config>) => TerrakitController<T>) {
-    console.log('Defining resources');
-    callbackController(this.stack.scope, this.stack);
-    return this;
-  }
-
-  overrideResources(arg: any) {
-    return this;
-  }
-
-  build() { }
-}
-
-export function createTerrakitStack(scope: Construct, options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>) {
-  return {}
-}
-const app = new App();
-const defaultProvider = new AzurermProvider(app, "azurerm_provider_default", {
-  // skipProviderRegistration: true,
-  resourceProviderRegistrations: 'core',
-  subscriptionId: '00000000-0000-0000-0000-000000000000',
-  features: [{}]
-});
-
-export const createController = (scope: Construct, stack: TerrakitStack<MyTerrakitStackConfig>) => {
-  return new TerrakitController(scope, stack.providers)
+export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
+  return new TerrakitController(stack, stack.providers)
     .resource({
       id: 'aaa1',
       resource: ({ id, providers, outputs }) =>
-        new ResourceGroup(app, id, {
+        new ResourceGroup(stack, id, {
           provider: providers.defaultAzureProvider,
           name: 'rg-' + id,
           location: 'eastus'
@@ -157,13 +128,12 @@ export const createController = (scope: Construct, stack: TerrakitStack<MyTerrak
     })
 }
 
-const myTerrakitStack = new TerrakitStack<MyTerrakitStackConfig>(app, {} as any);
-const stack = new Terrakit(myTerrakitStack)
-  .setController(createController)
-  .overrideResources({
-    aaa1: {
-      name: 'new-resource-group-name'
-    }
-  })
-  .build();
+export function createMyStack(
+  scope: Construct,
+  options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
+) {
+  const terrakitStack = new TerrakitStack(scope, options);
+  return new Terrakit(terrakitStack)
+    .setController(createController)
+}
 

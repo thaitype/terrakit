@@ -1,5 +1,5 @@
 import { App, TerraformOutput } from "cdktf";
-import { createMyStack, Terrakit } from "./MyStack.js";
+import { createMyStack, createMyStackOld } from "./MyStack.js";
 import { provider } from '@cdktf/provider-azurerm';
 
 const { AzurermProvider } = provider;
@@ -19,15 +19,9 @@ const myStack = createMyStack(app, {
       features: [{}]
     })
   },
-  // overrideResources: {
-  //   myResourceGroup: {
-  //     name: 'new-resource-group-name',
-  //   }
-  // }
-});
-
-
-
+})
+.overrideResources({})
+.build();
 
 
 app.synth();
