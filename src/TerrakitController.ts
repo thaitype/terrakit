@@ -24,36 +24,16 @@ export class TerrakitController<Configs extends Record<string, unknown> = {}, Ou
 
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) { }
 
-
-  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Outputs>) => Return })
-    : TerrakitController<Configs, Outputs & Record<Id, Return>>;
-
-  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Outputs>) => Return, if: boolean })
-    : TerrakitController<Configs, Outputs & Partial<Record<Id, Return>>>;
-
-  /**
-   * Add a resource to the controller
-   */
-  resource<Id extends string, Return>(
-    args: { id: Id, resource: (args: ResourceCallbackArgs<Outputs>) => Return, if?: boolean, }
-  ) {
-    if (args.if === true || args.if === undefined) {
-      this._resources[args.id] = args.resource;
-    }
-    return this as TerrakitController<Configs, Outputs & Record<Id, Return>>;
-  }
-
-
-  resourceV2<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2] })
+  resource<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2] })
     : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Record<Id, InstanceType<ResourceType>>>;
 
-  resourceV2<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if: boolean })
+  resource<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if: boolean })
     : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Partial<Record<Id, InstanceType<ResourceType>>>>;
 
   /**
    * Add a resource to the controller
    */
-  resourceV2<Id extends string, ResourceType extends AnyClass>(
+  resource<Id extends string, ResourceType extends AnyClass>(
     args: { id: Id, type: ResourceType, config: (args: ResourceV2CallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if?: boolean }
   ) {
     // if(!(args.type instanceof TerraformResource)) {

@@ -29,12 +29,12 @@ export class MyStackOriginal extends TerrakitStack<MyTerrakitStackConfig> {
     const controller = this.controller
       .resource({
         id: 'aaa1',
-        resource: ({ id, providers }) =>
-          new ResourceGroup(this, id, {
-            provider: providers.defaultAzureProvider,
-            name: 'rg-' + id,
-            location: 'eastus'
-          })
+        type: ResourceGroup,
+        config: ({ providers }) => ({
+          provider: providers.defaultAzureProvider,
+          name: 'rg-' + 'aaa1',
+          location: 'eastus'
+        }),
       }).build();
   }
 
@@ -117,7 +117,7 @@ export class MyStackOriginal extends TerrakitStack<MyTerrakitStackConfig> {
 
 export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
   return new TerrakitController(stack, stack.providers)
-    .resourceV2({
+    .resource({
       id: 'aaa1',
       type: ResourceGroup,
       config: ({ providers }) => ({
@@ -126,7 +126,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
         location: 'eastus'
       }),
     })
-    .resourceV2({
+    .resource({
       id: 'aaa2',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
@@ -138,7 +138,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
         accountTier: 'Standard'
       }),
     })
-    .resourceV2({
+    .resource({
       id: 'aaa3',
       if: stack.options.identifier.env === 'prod',
       type: StorageAccount,
@@ -151,7 +151,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
         accountTier: 'Standard'
       }),
     })
-    .resourceV2({
+    .resource({
       id: 'aaa4',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
