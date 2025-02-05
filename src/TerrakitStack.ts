@@ -2,69 +2,15 @@ import { App, TerraformStack, TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 import { z } from "zod";
 import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
+import { TerrakitController } from "./TerrakitController.js";
 
-export interface ResourceCallbackArgs<Outputs extends Record<string, unknown>> {
-  id: string;
-  providers: Record<string, TerraformProvider>;
-  outputs: Outputs;
-  scope: Construct;
-}
-
-export class TerrakitController<Resources extends Record<string, unknown> = {}> {
-
-  private _resources: Record<string, unknown> = {};
-  private _outputs: Record<string, unknown> = {};
-
-  constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) { }
-
-
-  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return })
-    : TerrakitController<Resources & Record<Id, Return>>;
-
-  resource<Id extends string, Return>(args: { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if: boolean })
-    : TerrakitController<Resources & Partial<Record<Id, Return>>>;
-
-  /**
-   * Add a resource to the controller
-   */
-  resource<Id extends string, Return>(
-    args:
-      | { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return }
-      | { id: Id, resource: (args: ResourceCallbackArgs<Resources>) => Return, if: boolean, }
-  ) {
-    // this.resources[id] = resource;
-    // TODO: 
-    return this as TerrakitController<Resources & Record<Id, Return>>;
-  }
-
-  build() {
-    console.log('Building resources');
-    for (const [id, resource] of Object.entries(this._resources)) {
-      if (typeof resource !== 'function') {
-        throw new Error('The resource must be a function');
-      }
-      this._outputs[id] = resource({
-        id,
-        scope: this.scope,
-        providers: this.providers,
-        outputs: this._outputs
-      });
-      console.log(`Built resource ${id}`);
-    }
-    return this as TerrakitController<Resources>;
-  }
-
-  get outputs() {
-    return this._outputs as Resources;
-  }
-}
 
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
 
   providers!: Record<keyof Config['providers'], TerraformProvider>;
   public controller!: TerrakitController;
 
-  constructor(scope: Construct, options?: TerrakitOptions<Config>) {
+  constructor(public readonly scope: Construct, options?: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
     super(scope, id);
 
