@@ -3,9 +3,7 @@
   "app": "bun run ./src/main.ts",
   "projectId": "1e3d83e3-44a5-499f-b5e6-56471b035359",
   "sendCrashReports": "false",
-  "terraformProviders": [
-    "hashicorp/azurerm@~>4.17.0"
-  ],
+  "terraformProviders": [],
   "terraformModules": [],
   "context": {}
 }

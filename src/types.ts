@@ -1,6 +1,6 @@
 import type { TerraformProvider } from "cdktf";
 import type { Construct } from "constructs";
-import type { TerrakitController } from "./TerrakitStack.js";
+import type { TerrakitController } from "./TerrakitController.js";
 
 export type BaseProviders = Record<string, TerraformProvider>;
 
@@ -21,15 +21,13 @@ export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitSt
   /**
    * The identifier of the stack.
    */
-  identifier?: Config['identifier'];
+  identifier: Config['identifier'];
   /**
    * The providers to use in this stack.
    * 
    * @default - If not provided, the stack will use the default providers.
    */
   providers?: Config['providers'];
-
-  overrideResources?: object;
 
   controller?: TerrakitController;
 }

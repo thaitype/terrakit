@@ -10,13 +10,12 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
   providers!: Record<keyof Config['providers'], TerraformProvider>;
   public controller!: TerrakitController;
 
-  constructor(public readonly scope: Construct, options?: TerrakitOptions<Config>) {
+  constructor(scope: Construct, public readonly options: TerrakitOptions<Config>) {
     const id = TerrakitStack.generateStackId(options);
     super(scope, id);
-
-    if (!options) {
-      throw new Error('The options are required to initialize the TerrakitStack.');
-    }
+    // if (!options) {
+    //   throw new Error('The options are required to initialize the TerrakitStack.');
+    // }
     if (options.controller) {
       console.log('Initialized controller at TerrakitStack');
       options.controller.build();
