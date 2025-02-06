@@ -1,7 +1,14 @@
 import { TerraformProvider, TerraformResource } from "cdktf";
 import { Construct } from "constructs";
+import type { PartialDeep } from "type-fest";
 
-type AnyClass = { new(...args: any[]): any; };
+export type AnyClass = { new(...args: any[]): any; };
+
+export type TerrakitResourceConfigs<Type extends AnyClass = AnyClass> = Record<string, {
+  type: Type;
+  if?: boolean;
+  config: ConstructorParameters<Type>[2];
+}>;
 
 export interface ResourceCallbackArgs<Outputs extends Record<string, unknown>> {
   id: string;
@@ -10,18 +17,33 @@ export interface ResourceCallbackArgs<Outputs extends Record<string, unknown>> {
   scope: Construct;
 }
 
-export class TerrakitController<Configs extends Record<string, unknown> = {}, Outputs extends Record<string, unknown> = {}> {
+export class TerrakitController<ResourceConfigs extends Record<string, unknown> = {}, Outputs extends Record<string, unknown> = {}> {
 
+  private _resourceRawConfigs: Record<string, {
+    type: AnyClass;
+    config: (args: ResourceCallbackArgs<Record<string, unknown>>) => unknown;
+    if?: boolean;
+  }> = {};
   private _resources: Record<string, unknown> = {};
   private _outputs: Record<string, unknown> = {};
 
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) { }
 
-  resource<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2] })
-    : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Record<Id, InstanceType<ResourceType>>>;
+  resource<Id extends string, ResourceType extends AnyClass>(
+    args: { id: Id, type: ResourceType, config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2] }
+  ):
+    TerrakitController<
+      ResourceConfigs & Record<Id, ConstructorParameters<ResourceType>[2]>,
+      Outputs & Record<Id, InstanceType<ResourceType>>
+    >;
 
-  resource<Id extends string, ResourceType extends AnyClass>(args: { id: Id, type: ResourceType, config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if: boolean })
-    : TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Partial<Record<Id, InstanceType<ResourceType>>>>;
+  resource<Id extends string, ResourceType extends AnyClass>(
+    args: { id: Id, type: ResourceType, config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if: boolean }
+  ):
+    TerrakitController<
+      ResourceConfigs & Record<Id, ConstructorParameters<ResourceType>[2]>,
+      Outputs & Partial<Record<Id, InstanceType<ResourceType>>>
+    >;
 
   /**
    * Add a resource to the controller
@@ -29,16 +51,36 @@ export class TerrakitController<Configs extends Record<string, unknown> = {}, Ou
   resource<Id extends string, ResourceType extends AnyClass>(
     args: { id: Id, type: ResourceType, config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2], if?: boolean }
   ) {
-    if (args.if === true || args.if === undefined) {
-      this._resources[args.id] = (args1: ResourceCallbackArgs<Outputs>) => {
-        return new args.type(this.scope, args.id, args.config(args1));
-      }
-    }
-    return this as TerrakitController<Configs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Record<Id, InstanceType<ResourceType>>>;
+    this._resourceRawConfigs[args.id] = {
+      type: args.type,
+      config: (args1: ResourceCallbackArgs<Record<string, unknown>>) => args.config(args1 as any),
+      if: args.if
+    };
+    return this;
   }
 
-  
+  prepareResources() {
+    console.log('Preparing resources');
+    const resourceCallbacks: Record<string, unknown> = {};
+    for (const [id, resourceConfig] of Object.entries(this._resourceRawConfigs)) {
+      if (resourceConfig.if === false) {
+        continue;
+      }
+      resourceCallbacks[id] = (args: ResourceCallbackArgs<Outputs>) => {
+        return new resourceConfig.type(args.scope, id, resourceConfig.config(args));
+      }
+      console.log(`Built resource ${id}`);
+    }
+    return resourceCallbacks;
+  }
+
+  overrideResources(resources: PartialDeep<ResourceConfigs>) {
+    
+  }
+
   build() {
+    this._resources = this.prepareResources();
+
     console.log('Building resources');
     for (const [id, resource] of Object.entries(this._resources)) {
       if (typeof resource !== 'function') {
@@ -52,7 +94,7 @@ export class TerrakitController<Configs extends Record<string, unknown> = {}, Ou
       });
       console.log(`Built resource ${id}`);
     }
-    return this as TerrakitController<Configs, Outputs>;
+    return this as TerrakitController<ResourceConfigs, Outputs>;
   }
 
   get outputs() {
