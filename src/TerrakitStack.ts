@@ -1,16 +1,17 @@
-import { App, TerraformStack, TerraformProvider } from "cdktf";
-import { Construct } from "constructs";
-import { z } from "zod";
-import type { TerrakitOptions, TerrakitStackConfig } from "./types.js";
-import { TerrakitController } from "./TerrakitController.js";
-
+import { App, TerraformStack, TerraformProvider } from 'cdktf';
+import { Construct } from 'constructs';
+import { z } from 'zod';
+import type { TerrakitOptions, TerrakitStackConfig } from './types.js';
+import { TerrakitController } from './TerrakitController.js';
 
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
-
   providers!: Record<keyof Config['providers'], TerraformProvider>;
   public controller!: TerrakitController;
 
-  constructor(scope: Construct, public readonly options: TerrakitOptions<Config>) {
+  constructor(
+    scope: Construct,
+    public readonly options: TerrakitOptions<Config>
+  ) {
     const id = TerrakitStack.generateStackId(options);
     super(scope, id);
     // if (!options) {
@@ -20,9 +21,11 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
       console.log('Initialized controller at TerrakitStack');
       options.controller.build();
       this.controller = options.controller;
-
     } else if (options.providers) {
-      this.providers = TerrakitStack.setupProviders(this, options) as Record<keyof Config['providers'], TerraformProvider>;
+      this.providers = TerrakitStack.setupProviders(this, options) as Record<
+        keyof Config['providers'],
+        TerraformProvider
+      >;
       console.log('Initialized providers at TerrakitStack');
       this.controller = new TerrakitController(scope, this.providers);
     }
@@ -39,12 +42,13 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     if (Object.keys(identifier).length === 0) {
       throw new Error('The identifier must not be empty.');
     }
-    return Object.entries(identifier).map(([key, value]) => `${key}_${value}`).join('-');
+    return Object.entries(identifier)
+      .map(([key, value]) => `${key}_${value}`)
+      .join('-');
   }
 
-
   static setupProviders(scope: Construct, options: TerrakitOptions) {
-    const providers: Record<string, any> = {}
+    const providers: Record<string, any> = {};
     for (const [key, provider] of Object.entries(options.providers as Record<string, any>)) {
       providers[key] = provider(scope);
     }
@@ -55,9 +59,8 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     // Attach the controller to the stack
     this.controller = controller as any;
     return {
-      stack: this,
-      outputs: controller.outputs
-    }
+      stack: this as TerrakitStack<Config>,
+      outputs: controller.outputs,
+    };
   }
-
 }

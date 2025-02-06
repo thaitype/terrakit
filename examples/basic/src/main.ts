@@ -11,9 +11,9 @@ class MyStack extends TerrakitStack {
     // define resources here
 
     new AzurermProvider(this, "AzureRm", {
-      resourceProviderRegistrations: 'core',
+      skipProviderRegistration: true,
       subscriptionId: '00000000-0000-0000-0000-000000000000',
-      features: [{}]
+      features: {}
     });
 
     const resourceGroup = new ResourceGroup(this, "rg-example", {
