@@ -8,8 +8,7 @@ export class Terrakit<StackConfig extends TerrakitStackConfig, Configs extends R
 
   public controller: TerrakitController<any> | undefined;
 
-  constructor(public readonly stack: TerrakitStack<StackConfig>) {
-  }
+  constructor(public readonly stack: TerrakitStack<StackConfig>) {}
 
   setController<Configs extends Record<string, unknown>, Outputs extends Record<string, unknown>>(callbackController: (stack: TerrakitStack<StackConfig>) => TerrakitController<Configs, Outputs>) {
     console.log('Defining resources');
