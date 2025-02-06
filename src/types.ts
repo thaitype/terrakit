@@ -2,8 +2,6 @@ import type { TerraformProvider } from 'cdktf';
 import type { Construct } from 'constructs';
 import type { TerrakitController } from './TerrakitController.js';
 
-export type BaseProviders = Record<string, TerraformProvider>;
-
 export type CallbackProvider = (scope: Construct) => TerraformProvider;
 
 export interface TerrakitStackConfig {

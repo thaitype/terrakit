@@ -1,5 +1,5 @@
-import { App, TerraformStack, TerraformProvider } from 'cdktf';
-import { Construct } from 'constructs';
+import { TerraformStack, type TerraformProvider } from 'cdktf';
+import type { Construct } from 'constructs';
 import { z } from 'zod';
 import type { TerrakitOptions, TerrakitStackConfig } from './types.js';
 import { TerrakitController } from './TerrakitController.js';

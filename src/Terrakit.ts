@@ -1,6 +1,5 @@
-import type { Construct } from 'constructs';
 import type { TerrakitStack } from './TerrakitStack.js';
-import type { TerrakitOptions, TerrakitStackConfig } from './types.js';
+import type { TerrakitStackConfig } from './types.js';
 import type { TerrakitController } from './TerrakitController.js';
 import type { PartialDeep } from 'type-fest';
 

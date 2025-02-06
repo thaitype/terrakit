@@ -1,5 +1,5 @@
-import { TerraformProvider, TerraformResource } from 'cdktf';
-import { Construct } from 'constructs';
+import type { TerraformProvider } from 'cdktf';
+import type { Construct } from 'constructs';
 import merge from 'lodash.merge';
 import type { PartialDeep } from 'type-fest';
 
