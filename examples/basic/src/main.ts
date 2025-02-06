@@ -1,9 +1,8 @@
 import { Construct } from "constructs";
-import { App, TerraformStack } from "cdktf";
-import * as az from '@cdktf/provider-azurerm';
-import { getResourceName, TerrakitStack, type TerrakitOptions } from 'terrakit';
-import { AzurermProvider } from '../.gen/providers/azurerm/provider/index.js';
-import { ResourceGroup } from '../.gen/providers/azurerm/resource-group/index.js';
+import { App } from "cdktf";
+import { TerrakitStack, type TerrakitOptions } from 'terrakit';
+import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
+import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
 
 class MyStack extends TerrakitStack {
   constructor(scope: Construct, options: TerrakitOptions) {
@@ -11,10 +10,14 @@ class MyStack extends TerrakitStack {
 
     // define resources here
 
-    new AzurermProvider(this, "AzureRm", {});
+    new AzurermProvider(this, "AzureRm", {
+      resourceProviderRegistrations: 'core',
+      subscriptionId: '00000000-0000-0000-0000-000000000000',
+      features: [{}]
+    });
 
     const resourceGroup = new ResourceGroup(this, "rg-example", {
-      name: "devops-resource-group-" + getResourceName(),
+      name: "devops-resource-group",
       location: "eastus",
     })
 
@@ -24,6 +27,7 @@ class MyStack extends TerrakitStack {
 
 const app = new App();
 new MyStack(app, {
-  id: "demo-cdktf"
+  id: "demo-cdktf",
+  identifier: {}
 });
 app.synth();
