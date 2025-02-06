@@ -58,9 +58,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thaitype/typescript-npm-boilerplate-esm-cjs.git"
+    "url": "https://github.com/thaitype/terrakit.git"
   },
-  "homepage": "https://github.com/thaitype/typescript-npm-boilerplate-esm-cjs",
+  "homepage": "https://github.com/thaitype/terrakit",
   "dependencies": {
     "cdktf": "^0.20.11",
     "constructs": "^10.4.2",

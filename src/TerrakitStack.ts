@@ -53,7 +53,7 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
 
   output<T extends Record<string, any> = {}>(controller: TerrakitController<T>) {
     // Attach the controller to the stack
-    this.controller = controller;
+    this.controller = controller as any;
     return {
       stack: this,
       outputs: controller.outputs
