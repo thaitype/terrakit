@@ -19,6 +19,9 @@ const myStack = createMyStack(app, {
   },
 })
 .overrideResources({
+  aaa1: {
+    name: 'custom-rg'
+  }
 })
 .build();
 

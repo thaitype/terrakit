@@ -17,6 +17,10 @@ export class Terrakit<StackConfig extends TerrakitStackConfig, Configs extends R
   }
 
   overrideResources(arg: PartialDeep<Configs>) {
+    if(!this.controller) {
+      throw new Error('Controller not defined, call setController first');
+    }
+    this.controller.overrideResources(arg);
     return this;
   }
 

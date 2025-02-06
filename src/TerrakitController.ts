@@ -1,5 +1,6 @@
 import { TerraformProvider, TerraformResource } from "cdktf";
 import { Construct } from "constructs";
+import merge from "lodash.merge";
 import type { PartialDeep } from "type-fest";
 
 export type AnyClass = { new(...args: any[]): any; };
@@ -25,6 +26,7 @@ export class TerrakitController<ResourceConfigs extends Record<string, unknown> 
     if?: boolean;
   }> = {};
   private _resources: Record<string, unknown> = {};
+  private _overrideResourceConfigs: Record<string, unknown> = {};
   private _outputs: Record<string, unknown> = {};
 
   constructor(private scope: Construct, private providers: Record<string, TerraformProvider>) { }
@@ -67,7 +69,8 @@ export class TerrakitController<ResourceConfigs extends Record<string, unknown> 
         continue;
       }
       resourceCallbacks[id] = (args: ResourceCallbackArgs<Outputs>) => {
-        return new resourceConfig.type(args.scope, id, resourceConfig.config(args));
+        let overrides = this._overrideResourceConfigs[id] || {};
+        return new resourceConfig.type(args.scope, id, merge({}, resourceConfig.config(args), overrides));
       }
       console.log(`Built resource ${id}`);
     }
@@ -75,7 +78,7 @@ export class TerrakitController<ResourceConfigs extends Record<string, unknown> 
   }
 
   overrideResources(resources: PartialDeep<ResourceConfigs>) {
-    
+    this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, resources);
   }
 
   build() {
