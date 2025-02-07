@@ -1,0 +1,4 @@
+language: typescript
+app: bun run src/main.ts
+imports:
+  - k8s

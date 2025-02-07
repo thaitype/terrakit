@@ -1,0 +1,27 @@
+{
+  "name": "advanced",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "import": "bunx cdk8s-cli import",
+    "synth": "bunx cdk8s-cli synth",
+    "build": "npm run synth",
+    "upgrade": "npm i cdk8s@latest cdk8s-cli@latest",
+    "upgrade:next": "npm i cdk8s@next cdk8s-cli@next"
+  },
+  "dependencies": {
+    "@cdktf/provider-azurerm": "13.17.0",
+    "cdk8s": "^2.69.39",
+    "cdktf": "^0.20.11",
+    "constructs": "^10.4.2",
+    "cdk8s-plus-28": "^2.5.6"
+  },
+  "devDependencies": {
+    "cdk8s-cli": "^2.198.317",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
