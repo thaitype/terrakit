@@ -1,9 +1,9 @@
 import { App, TerraformOutput } from "cdktf";
-import { createMyStack } from "./MyStack.js";
+import { MyStack } from "./MyStack.js";
 import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
 
 const app = new App();
-const myStack = createMyStack(app, {
+const myStack = new MyStack(app, {
   identifier: {
     env: 'prod',
     slot: 'prod',
@@ -17,13 +17,13 @@ const myStack = createMyStack(app, {
       features: [{}]
     })
   },
-})
-.overrideResources({
-  aaa1: {
-    name: 'custom-rg'
-  }
-})
-.build();
+}).configureStack()
+  .overrideResources({
+    aaa1: {
+      name: 'custom-rg'
+    }
+  })
+  .build();
 
 
 app.synth();

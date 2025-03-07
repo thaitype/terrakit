@@ -96,6 +96,7 @@ export class TerrakitController<
 
   overrideResources(resources: PartialDeep<ResourceConfigs>) {
     this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, resources);
+    return this;
   }
 
   build() {
