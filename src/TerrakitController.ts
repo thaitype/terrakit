@@ -42,7 +42,7 @@ export class TerrakitController<
     private providers: Record<string, TerraformProvider>
   ) {}
 
-  resource<Id extends string, ResourceType extends AnyClass>(args: {
+  add<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
@@ -51,7 +51,7 @@ export class TerrakitController<
     Outputs & Record<Id, InstanceType<ResourceType>>
   >;
 
-  resource<Id extends string, ResourceType extends AnyClass>(args: {
+  add<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
@@ -64,7 +64,7 @@ export class TerrakitController<
   /**
    * Add a resource to the controller
    */
-  resource<Id extends string, ResourceType extends AnyClass>(args: {
+  add<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
