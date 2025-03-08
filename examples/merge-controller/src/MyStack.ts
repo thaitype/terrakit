@@ -1,4 +1,4 @@
-import { type CallbackProvider, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
+import { type CallbackProvider, type MergeControllerUnion, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
 import { Construct } from "constructs";
 import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
@@ -15,6 +15,8 @@ export interface MyTerrakitStackConfig {
   };
 }
 
+
+
 export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
   const resourceGroup = new TerrakitController(stack, stack.providers)
     .add({
@@ -27,6 +29,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
       }),
     });
 
+  
   const storageAccount = new TerrakitController(stack, stack.providers)
     .add({
       id: 'storage_account',
@@ -41,10 +44,18 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
       }),
     });
 
+    // return storageAccount; // Error 
     // return storageAccount.merge(resourceGroup); Error;
-    return resourceGroup.merge(storageAccount);
+  
+    
+    if(stack.options.identifier.site === 'active') {
+      return resourceGroup.merge(storageAccount);
+    }
+    return resourceGroup;
 
 }
+type ReturnCreateController = ReturnType<typeof createController>;
+type MyController = MergeControllerUnion<ReturnCreateController>;
 
 export function createMyStack(
   scope: Construct,
@@ -52,5 +63,5 @@ export function createMyStack(
 ) {
   const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
   return new Terrakit(terrakitStack)
-    .setController(createController)
+    .setController(createController as (stack: TerrakitStack<MyTerrakitStackConfig>) => MyController)
 }

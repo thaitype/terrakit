@@ -20,6 +20,15 @@ export class Terrakit<
     return this as unknown as Terrakit<StackConfig, Configs, Outputs>;
   }
 
+
+  // setController2<T extends TerrakitController<>>(
+  //   callbackController: (stack: TerrakitStack<StackConfig>) => TerrakitController<Configs, Outputs>
+  // ) {
+  //   console.log('Defining resources');
+  //   this.controller = callbackController(this.stack);
+  //   return this as unknown as Terrakit<StackConfig, Configs, Outputs>;
+  // }
+
   overrideResources(arg: PartialDeep<Configs>) {
     if (!this.controller) {
       throw new Error('Controller not defined, call setController first');
