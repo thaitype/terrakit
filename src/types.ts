@@ -34,9 +34,6 @@ export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitSt
 // Merge Controller Type Utility
 // ----------------------------
 
-// class Controller<Configs extends Record<string, unknown> = {}, Outputs extends Record<string, unknown> = {}> { }
-// const controller = new Controller<{ name: string; age: number }, { out: string }>();
-
 // **Step 1**: Extracts the inner type `T` from `Controller<T>`, and infer the `Configs` and `Outputs` type
 export type ExtractController<T> = {
   configs: T extends TerrakitController<infer U, any> ? U : never;
@@ -52,25 +49,3 @@ export type MergeControllerUnion<T> = TerrakitController<
   Partial<UnionToIntersection<ExtractController<T>['configs']>>,
   Partial<UnionToIntersection<ExtractController<T>['outputs']>>
 >;
-
-// export type Configs = ExtractController<typeof controller>['configs'];
-// export type Outputs = ExtractController<typeof controller>['outputs'];
-
-type OutA = { output: 'A' }
-type OutB = { output: 'B' }
-type A = { name: string; age: number };
-type B = { email: string; active: boolean };
-
-type C1 = TerrakitController<A, OutA>;
-type C2 = TerrakitController<B, OutB>;
-
-type Merged = MergeControllerUnion<C1 | C2>;
-
-
-const mergedConfig: ExtractController<Merged>['configs'] = {
-  name: 'John',
-  age: 30,
-}
-
-// **Expected Output:**
-// Controller<{ name?: string; age?: number; email?: string; active?: boolean }>

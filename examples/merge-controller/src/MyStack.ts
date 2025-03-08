@@ -1,4 +1,4 @@
-import { type CallbackController, type CallbackProvider, type ExtractController, type MergeControllerUnion, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig, unionControllerHelper } from "terrakit";
+import { type CallbackProvider, type ExtractController, type MergeControllerUnion, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig, unionControllerHelper } from "terrakit";
 import { Construct } from "constructs";
 import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
@@ -58,6 +58,6 @@ export function createMyStack(
 ) {
   const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
   return new Terrakit(terrakitStack)
-    .setController(unionControllerHelper(createController))
+    .setController(createController)
 }
 
