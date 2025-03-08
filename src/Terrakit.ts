@@ -24,7 +24,7 @@ export class Terrakit<
     if (!this.controller) {
       throw new Error('Controller not defined, call setController first');
     }
-    this.controller.overrideResources(arg);
+    this.controller.overrideStack(arg);
     return this;
   }
 
