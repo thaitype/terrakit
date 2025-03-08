@@ -18,15 +18,15 @@ const myStack = createMyStack(app, {
     })
   },
 })
-.overrideResources({
-  storage_account: {
-    name: 'custom-rg'
-  },
-  resource_group: {
-    name: 'my-rg'
-  }
-})
-.build();
+  .overrideResources({
+    storage_account: {
+      name: 'custom-rg'
+    },
+    resource_group: {
+      name: 'my-rg'
+    }
+  })
+  .build();
 
 
 app.synth();

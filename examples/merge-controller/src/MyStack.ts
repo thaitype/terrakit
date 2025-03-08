@@ -1,4 +1,4 @@
-import { type CallbackProvider, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
+import { type CallbackProvider, type ControllerFactoryFn, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
 import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
@@ -52,6 +52,8 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
 
 }
 
+// Functional approach
+
 export function createMyStack(
   scope: Construct,
   options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
@@ -61,3 +63,15 @@ export function createMyStack(
     .setController(createController)
 }
 
+// Class approach
+
+export class MyStack extends TerrakitStack<MyTerrakitStackConfig> {
+  constructor(public scope: Construct, public options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>) {
+    super(scope, options);
+  }
+
+  configureStack(){
+    return new Terrakit(this)
+      .setController(createController)
+  }
+}

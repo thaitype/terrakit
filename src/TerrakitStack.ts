@@ -55,6 +55,10 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     return providers;
   }
 
+  configureStack(): void {
+    throw new Error('Method not implemented.');
+  }
+
   output<T extends Record<string, any> = {}>(controller: TerrakitController<T>) {
     // Attach the controller to the stack
     this.controller = controller as any;
