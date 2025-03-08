@@ -1,4 +1,4 @@
-import { type CallbackProvider, type ExtractController, type MergeControllerUnion, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig, unionControllerHelper } from "terrakit";
+import { type CallbackProvider, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
 import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
@@ -42,8 +42,8 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
       }),
     });
 
-  // return storageAccount; // Error 
-  // return storageAccount.merge(resourceGroup); Error;
+  // return storageAccount; // Error, due to it requires resourceGroup name to be resolved
+  // return storageAccount.merge(resourceGroup); Error, due to it requires resourceGroup name to be resolved before merging
 
   if (stack.options.identifier.site === 'active') {
     return resourceGroup.merge(storageAccount);
