@@ -16,53 +16,33 @@ export interface MyTerrakitStackConfig {
 }
 
 export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
-  return new TerrakitController(stack, stack.providers)
+  const resourceGroup = new TerrakitController(stack, stack.providers)
     .add({
-      id: 'aaa1',
+      id: 'resource_group',
       type: ResourceGroup,
       config: ({ providers }) => ({
         provider: providers.defaultAzureProvider,
         name: 'rg-' + 'aaa1',
         location: 'eastus'
       }),
-    })
+    });
+
+  const storageAccount = new TerrakitController(stack, stack.providers)
     .add({
-      id: 'aaa2',
+      id: 'storage_account',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,
-        name: 'sa' + 'aaa2',
-        resourceGroupName: outputs.aaa1.name,
+        name: 'sa' + 'aaa1',
+        resourceGroupName: resourceGroup.outputs.resource_group.name,
         location: 'eastus',
         accountReplicationType: 'LRS',
         accountTier: 'Standard'
-      }),
-    })
-    .add({
-      id: 'aaa3',
-      if: stack.options.identifier.env === 'prod',
-      type: StorageAccount,
-      config: ({ providers, outputs }) => ({
-        provider: providers.defaultAzureProvider,
-        name: 'sa' + 'aaa3',
-        resourceGroupName: outputs.aaa2.accessTier,
-        location: 'eastus',
-        accountReplicationType: 'LRS',
-        accountTier: 'Standard'
-      }),
-    })
-    .add({
-      id: 'aaa4',
-      type: StorageAccount,
-      config: ({ providers, outputs }) => ({
-        provider: providers.defaultAzureProvider,
-        name: 'sa' + 'aaa4',
-        resourceGroupName: outputs.aaa3?.name ?? 'default-rg',
-        location: 'eastus',
-        accountReplicationType: 'LRS',
-        accountTier: 'Standard',
       }),
     });
+
+    // return storageAccount.merge(resourceGroup); Error;
+    return resourceGroup.merge(storageAccount);
 
 }
 

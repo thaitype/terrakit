@@ -19,9 +19,9 @@ const myStack = createMyStack(app, {
   },
 })
 .overrideResources({
-  aaa1: {
+  storage_account: {
     name: 'custom-rg'
-  }
+  },
 })
 .build();
 
