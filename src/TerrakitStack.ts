@@ -4,7 +4,7 @@ import { z } from 'zod';
 import type { TerrakitOptions, TerrakitStackConfig } from './types.js';
 import { TerrakitController } from './TerrakitController.js';
 
-export abstract class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
+export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
   providers!: Record<keyof Config['providers'], TerraformProvider>;
   public controller!: TerrakitController;
 
@@ -29,7 +29,6 @@ export abstract class TerrakitStack<Config extends TerrakitStackConfig = Terraki
       console.log('Initialized providers at TerrakitStack');
       this.controller = new TerrakitController(scope, this.providers);
     }
-    this.configureStack();
   }
 
   static generateStackId<Config extends TerrakitStackConfig>(options?: TerrakitOptions<Config>): string {
@@ -55,8 +54,6 @@ export abstract class TerrakitStack<Config extends TerrakitStackConfig = Terraki
     }
     return providers;
   }
-
-  abstract configureStack(): unknown;
 
   output<T extends Record<string, any> = {}>(controller: TerrakitController<T>) {
     // Attach the controller to the stack
