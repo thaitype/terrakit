@@ -22,7 +22,9 @@ const myStack = createMyStack(app, {
   storage_account: {
     name: 'custom-rg'
   },
-  resource_group: {}
+  resource_group: {
+    name: 'my-rg'
+  }
 })
 .build();
 

@@ -2,6 +2,8 @@ import type { TerraformProvider } from 'cdktf';
 import type { Construct } from 'constructs';
 import merge from 'lodash.merge';
 import type { PartialDeep } from 'type-fest';
+import type { TerrakitStack } from './TerrakitStack.js';
+import type { MergeControllerUnion } from './types.js';
 
 export type AnyClass = { new(...args: any[]): any };
 
@@ -135,4 +137,14 @@ export class TerrakitController<
   get outputs() {
     return this._outputs as Outputs;
   }
+}
+
+export function unionControllerHelper<
+  T extends (stack: TerrakitStack<any>) => TerrakitController<any, any>
+>(fn: T) {
+  // We return a new function that calls the original
+  // and ensures the return type is "MergeControllerUnion<ReturnType<T>>".
+  return (stack: Parameters<T>[0]): MergeControllerUnion<ReturnType<T>> => {
+    return fn(stack) as MergeControllerUnion<ReturnType<T>>;
+  };
 }

@@ -66,12 +66,8 @@ type C2 = TerrakitController<B, OutB>;
 
 type Merged = MergeControllerUnion<C1 | C2>;
 
-type ExtractMerged<T> = {
-  configs: T extends TerrakitController<infer U, any> ? U : never;
-  outputs: T extends TerrakitController<any, infer U> ? U : never;
-}
 
-const mergedConfig: ExtractMerged<Merged>['configs'] = {
+const mergedConfig: ExtractController<Merged>['configs'] = {
   name: 'John',
   age: 30,
 }
