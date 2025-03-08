@@ -7,8 +7,9 @@ import type { PartialDeep } from 'type-fest';
  * The shape of a generic factory function that
  * returns a TerrakitController for a given stack.
  */
-export type ControllerFactoryFn<S extends TerrakitStackConfig> =
-  (stack: TerrakitStack<S>) => TerrakitController<any, any>;
+export type ControllerFactoryFn<S extends TerrakitStackConfig> = (
+  stack: TerrakitStack<S>
+) => TerrakitController<any, any>;
 
 export class Terrakit<
   StackConfig extends TerrakitStackConfig,
@@ -17,7 +18,7 @@ export class Terrakit<
 > {
   public controller: TerrakitController<any> | undefined;
 
-  constructor(public readonly stack: TerrakitStack<StackConfig>) { }
+  constructor(public readonly stack: TerrakitStack<StackConfig>) {}
 
   // setController<Configs extends Record<string, unknown>, Outputs extends Record<string, unknown>>(
   //   callbackController: CallbackController<StackConfig, Configs, Outputs>
@@ -31,9 +32,7 @@ export class Terrakit<
    * A single function signature that returns
    * a Terrakit with the "merged" type of the returned controller.
    */
-  public setController<
-    T extends ControllerFactoryFn<StackConfig>,
-  >(callbackController: T) {
+  public setController<T extends ControllerFactoryFn<StackConfig>>(callbackController: T) {
     console.log('Defining resources');
 
     // Invoke the provided controller factory function and ensure its return type
@@ -48,7 +47,7 @@ export class Terrakit<
     return this as Terrakit<
       StackConfig,
       ExtractController<MergeControllerUnion<ReturnType<T>>>['configs'], // Extracts and assigns the new config type
-      ExtractController<MergeControllerUnion<ReturnType<T>>>['outputs']  // Extracts and assigns the new outputs type
+      ExtractController<MergeControllerUnion<ReturnType<T>>>['outputs'] // Extracts and assigns the new outputs type
     >;
   }
 
