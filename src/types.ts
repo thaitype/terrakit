@@ -29,3 +29,23 @@ export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitSt
 
   controller?: TerrakitController;
 }
+
+// ----------------------------
+// Merge Controller Type Utility
+// ----------------------------
+
+// **Step 1**: Extracts the inner type `T` from `Controller<T>`, and infer the `Configs` and `Outputs` type
+export type ExtractController<T> = {
+  configs: T extends TerrakitController<infer U, any> ? U : never;
+  outputs: T extends TerrakitController<any, infer U> ? U : never;
+}
+
+// **Step 2**: Convert `A | B` into `A & B`
+export type UnionToIntersection<U> =
+  (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
+
+// **Step 3**: Apply Partial<> and wrap it back into Controller<T>
+export type MergeControllerUnion<T> = TerrakitController<
+  Partial<UnionToIntersection<ExtractController<T>['configs']>>,
+  Partial<UnionToIntersection<ExtractController<T>['outputs']>>
+>;

@@ -2,8 +2,10 @@ import type { TerraformProvider } from 'cdktf';
 import type { Construct } from 'constructs';
 import merge from 'lodash.merge';
 import type { PartialDeep } from 'type-fest';
+import type { TerrakitStack } from './TerrakitStack.js';
+import type { MergeControllerUnion } from './types.js';
 
-export type AnyClass = { new (...args: any[]): any };
+export type AnyClass = { new(...args: any[]): any };
 
 export type TerrakitResourceConfigs<Type extends AnyClass = AnyClass> = Record<
   string,
@@ -40,7 +42,7 @@ export class TerrakitController<
   constructor(
     private scope: Construct,
     private providers: Record<string, TerraformProvider>
-  ) {}
+  ) { }
 
   add<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
@@ -76,6 +78,20 @@ export class TerrakitController<
       if: args.if,
     };
     return this;
+  }
+
+  /**
+   * merge controller to another controller
+   * @returns 
+   */
+  merge<Id extends string, ResourceType extends AnyClass>(controller
+    : TerrakitController<
+      Record<Id, ConstructorParameters<ResourceType>[2]>,
+      Record<Id, InstanceType<ResourceType>>
+    >) {
+    this._resourceRawConfigs = merge({}, this._resourceRawConfigs, controller._resourceRawConfigs);
+    this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, controller._overrideResourceConfigs);
+    return this as TerrakitController<ResourceConfigs & Record<Id, ConstructorParameters<ResourceType>[2]>, Outputs & Record<Id, InstanceType<ResourceType>>>;
   }
 
   prepareResources() {

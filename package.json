@@ -31,6 +31,7 @@
     "prepublishOnly": "bun run build",
     "release": "bun run build && release-it",
     "format": "prettier --write src",
+    "build:watch": "tsc -b tsconfig.build.json -w",
     "build": "bun format && bun build-esm && bun build-cjs && bun build-annotate",
     "build-esm": "tsc -b tsconfig.build.json",
     "build-cjs": "babel dist/esm --plugins @babel/transform-export-namespace-from --plugins @babel/transform-modules-commonjs --out-dir dist/cjs --source-maps",
