@@ -1,5 +1,5 @@
 {
-  "name": "basic",
+  "name": "merge-controller",
   "module": "index.ts",
   "type": "module",
   "private": true,
