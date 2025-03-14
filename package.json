@@ -49,10 +49,8 @@
     "prettier": "^3.4.2",
     "release-it": "^17.3.0",
     "constructs": "^10.4.2",
+    "typescript": "^5.7.2",
     "type-fest": "^4.33.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5.7.2"
   },
   "publishConfig": {
     "access": "public",
