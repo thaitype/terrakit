@@ -17,7 +17,7 @@ export interface MyTerrakitStackConfig {
 
 export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
   return new BlockComposer(stack, stack.providers)
-    .add({
+    .addClass({
       id: 'aaa1',
       type: ResourceGroup,
       config: ({ providers }) => ({
@@ -26,7 +26,7 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
         location: 'eastus'
       }),
     })
-    .add({
+    .addClass({
       id: 'aaa2',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
@@ -38,7 +38,7 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
         accountTier: 'Standard'
       }),
     })
-    .add({
+    .addClass({
       id: 'aaa3',
       if: stack.options.identifier.env === 'prod',
       type: StorageAccount,
@@ -51,7 +51,7 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
         accountTier: 'Standard'
       }),
     })
-    .add({
+    .addClass({
       id: 'aaa4',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({

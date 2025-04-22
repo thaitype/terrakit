@@ -42,7 +42,7 @@ export class BlockComposer<
     private providers: Record<string, TerraformProvider>
   ) {}
 
-  add<Id extends string, ResourceType extends AnyClass>(args: {
+  addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
@@ -51,7 +51,7 @@ export class BlockComposer<
     Outputs & Record<Id, InstanceType<ResourceType>>
   >;
 
-  add<Id extends string, ResourceType extends AnyClass>(args: {
+  addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
@@ -64,7 +64,7 @@ export class BlockComposer<
   /**
    * Add a resource to the composer
    */
-  add<Id extends string, ResourceType extends AnyClass>(args: {
+  addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
@@ -109,7 +109,7 @@ export class BlockComposer<
     return resourceCallbacks;
   }
 
-  overrideStack(resources: PartialDeep<ResourceConfigs>) {
+  override(resources: PartialDeep<ResourceConfigs>) {
     this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, resources);
     return this;
   }

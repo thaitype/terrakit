@@ -49,11 +49,11 @@ export class Terrakit<
     >;
   }
 
-  overrideResources(arg: PartialDeep<Configs>) {
+  override(arg: PartialDeep<Configs>) {
     if (!this.composer) {
       throw new Error('Composer not defined, call setComposer first');
     }
-    this.composer.overrideStack(arg);
+    this.composer.override(arg);
     return this;
   }
 

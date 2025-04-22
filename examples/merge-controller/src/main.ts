@@ -18,7 +18,7 @@ const myStack = createMyStack(app, {
     })
   },
 })
-  .overrideResources({
+  .override({
     storage_account: {
       name: 'custom-rg'
     },
