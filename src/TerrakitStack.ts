@@ -2,11 +2,11 @@ import { TerraformStack, type TerraformProvider } from 'cdktf';
 import type { Construct } from 'constructs';
 import { z } from 'zod';
 import type { TerrakitOptions, TerrakitStackConfig } from './types.js';
-import { TerrakitController } from './TerrakitController.js';
+import { BlockComposer } from './BlockComposer.js';
 
 export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackConfig> extends TerraformStack {
   providers!: Record<keyof Config['providers'], TerraformProvider>;
-  public controller!: TerrakitController;
+  public composer!: BlockComposer;
 
   constructor(
     scope: Construct,
@@ -17,17 +17,17 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     // if (!options) {
     //   throw new Error('The options are required to initialize the TerrakitStack.');
     // }
-    if (options.controller) {
-      console.log('Initialized controller at TerrakitStack');
-      options.controller.build();
-      this.controller = options.controller;
+    if (options.composer) {
+      console.log('Initialized composer at TerrakitStack');
+      options.composer.build();
+      this.composer = options.composer;
     } else if (options.providers) {
       this.providers = TerrakitStack.setupProviders(this, options) as Record<
         keyof Config['providers'],
         TerraformProvider
       >;
       console.log('Initialized providers at TerrakitStack');
-      this.controller = new TerrakitController(scope, this.providers);
+      this.composer = new BlockComposer(scope, this.providers);
     }
   }
 
@@ -59,12 +59,12 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     throw new Error('Method not implemented.');
   }
 
-  output<T extends Record<string, any> = {}>(controller: TerrakitController<T>) {
-    // Attach the controller to the stack
-    this.controller = controller as any;
+  output<T extends Record<string, any> = {}>(composer: BlockComposer<T>) {
+    // Attach the composer to the stack
+    this.composer = composer as any;
     return {
       stack: this as TerrakitStack<Config>,
-      outputs: controller.outputs,
+      outputs: composer.outputs,
     };
   }
 }

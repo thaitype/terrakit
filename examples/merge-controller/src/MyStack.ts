@@ -1,4 +1,4 @@
-import { type CallbackProvider, type ControllerFactoryFn, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack } from "terrakit";
+import { type CallbackProvider, type ComposerFactoryFn, Terrakit, BlockComposer, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
 import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
@@ -15,8 +15,8 @@ export interface MyTerrakitStackConfig {
   };
 }
 
-export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
-  const resourceGroup = new TerrakitController(stack, stack.providers)
+export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
+  const resourceGroup = new BlockComposer(stack, stack.providers)
     .add({
       id: 'resource_group',
       type: ResourceGroup,
@@ -28,7 +28,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
     });
 
 
-  const storageAccount = new TerrakitController(stack, stack.providers)
+  const storageAccount = new BlockComposer(stack, stack.providers)
     .add({
       id: 'storage_account',
       type: StorageAccount,
@@ -60,7 +60,7 @@ export function createMyStack(
 ) {
   const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
   return new Terrakit(terrakitStack)
-    .setController(createController)
+    .setComposer(createComposer)
 }
 
 // Class approach
@@ -72,6 +72,6 @@ export class MyStack extends TerrakitStack<MyTerrakitStackConfig> {
 
   configureStack(){
     return new Terrakit(this)
-      .setController(createController)
+      .setComposer(createComposer)
   }
 }
