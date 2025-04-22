@@ -3,7 +3,7 @@ import type { Construct } from 'constructs';
 import merge from 'lodash.merge';
 import type { PartialDeep } from 'type-fest';
 
-export type AnyClass = { new (...args: any[]): any };
+export type AnyClass = { new(...args: any[]): any };
 
 export type TerrakitResourceConfigs<Type extends AnyClass = AnyClass> = Record<
   string,
@@ -21,18 +21,17 @@ export interface ResourceCallbackArgs<Outputs extends Record<string, unknown>> {
   scope: Construct;
 }
 
+export interface RawConfig {
+  type: AnyClass;
+  config: (args: ResourceCallbackArgs<Record<string, unknown>>) => unknown;
+  if?: boolean;
+}
+
 export class BlockComposer<
   ResourceConfigs extends Record<string, unknown> = {},
   Outputs extends Record<string, unknown> = {},
 > {
-  private _resourceRawConfigs: Record<
-    string,
-    {
-      type: AnyClass;
-      config: (args: ResourceCallbackArgs<Record<string, unknown>>) => unknown;
-      if?: boolean;
-    }
-  > = {};
+  private _resourceRawConfigs: Record<string, RawConfig> = {};
   private _resources: Record<string, unknown> = {};
   private _overrideResourceConfigs: Record<string, unknown> = {};
   private _outputs: Record<string, unknown> = {};
@@ -40,7 +39,7 @@ export class BlockComposer<
   constructor(
     private scope: Construct,
     private providers: Record<string, TerraformProvider>
-  ) {}
+  ) { }
 
   addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
@@ -131,6 +130,10 @@ export class BlockComposer<
       console.log(`Built resource ${id}`);
     }
     return this as BlockComposer<ResourceConfigs, Outputs>;
+  }
+
+  toOptional() {
+    return this as BlockComposer<ResourceConfigs, Outputs> | undefined;
   }
 
   get outputs() {

@@ -25,7 +25,8 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
         name: 'rg-' + 'aaa1',
         location: 'eastus'
       }),
-    });
+    })
+    .toOptional();
 
 
   const storageAccount = new BlockComposer(stack, stack.providers)
@@ -35,15 +36,18 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
       config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,
         name: 'sa' + 'aaa1',
-        resourceGroupName: resourceGroup.outputs.resource_group.name,
+        resourceGroupName: resourceGroup!.outputs.resource_group.name,
         location: 'eastus',
         accountReplicationType: 'LRS',
         accountTier: 'Standard'
       }),
-    });
+    })
 
   // return storageAccount; // Error, due to it requires resourceGroup name to be resolved
   // return storageAccount.merge(resourceGroup); Error, due to it requires resourceGroup name to be resolved before merging
+  if (!resourceGroup) {
+    throw new Error(`ResourceGroup is not defined`);
+  }
 
   if (stack.options.identifier.site === 'active') {
     return resourceGroup.merge(storageAccount);
@@ -70,7 +74,7 @@ export class MyStack extends TerrakitStack<MyTerrakitStackConfig> {
     super(scope, options);
   }
 
-  configureStack(){
+  configureStack() {
     return new Terrakit(this)
       .setComposer(createComposer)
   }
