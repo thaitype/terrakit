@@ -14,17 +14,9 @@ export class Terrakit<
   Configs extends Record<string, unknown> = {},
   Outputs extends Record<string, unknown> = {},
 > {
-  public composer: BlockComposer<any> | undefined;
+  public composer!: BlockComposer<Configs, Outputs>;
 
   constructor(public readonly stack: TerrakitStack<StackConfig>) {}
-
-  // setComposer<Configs extends Record<string, unknown>, Outputs extends Record<string, unknown>>(
-  //   callbackComposer: CallbackComposer<StackConfig, Configs, Outputs>
-  // ) {
-  //   console.log('Defining resources');
-  //   this.composer = callbackComposer(this.stack);
-  //   return this as unknown as Terrakit<StackConfig, Configs, Outputs>;
-  // }
 
   /**
    * A single function signature that returns
@@ -38,11 +30,11 @@ export class Terrakit<
     const mergedComposer = callbackComposer(this.stack) as MergeComposerUnion<ReturnType<T>>;
 
     // Store the merged composer instance.
-    this.composer = mergedComposer;
+    this.composer = mergedComposer as unknown as BlockComposer<Configs, Outputs>;
 
     // Return `this` with updated type parameters that reflect the merged composer’s structure.
     // We extract 'configs' and 'outputs' types using ExtractComposer<MergeComposerUnion<ReturnType<T>>>.
-    return this as Terrakit<
+    return this as unknown as Terrakit<
       StackConfig,
       ExtractComposer<MergeComposerUnion<ReturnType<T>>>['configs'], // Extracts and assigns the new config type
       ExtractComposer<MergeComposerUnion<ReturnType<T>>>['outputs'] // Extracts and assigns the new outputs type
@@ -62,6 +54,6 @@ export class Terrakit<
       throw new Error('Composer not defined');
     }
     console.log('Building resources');
-    this.composer.build();
+    return this.composer.build();
   }
 }

@@ -132,7 +132,7 @@ export class BlockComposer<
     return this as BlockComposer<ResourceConfigs, Outputs>;
   }
 
-  toOptional() {
+  alwaysOptional() {
     return this as BlockComposer<ResourceConfigs, Outputs> | undefined;
   }
 

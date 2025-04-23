@@ -49,14 +49,13 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
     throw new Error(`ResourceGroup is not defined`);
   }
 
-  if (stack.options.identifier.site === 'active') {
-    return resourceGroup.merge(storageAccount);
-  }
-  return resourceGroup;
+  // if (stack.options.identifier.site === 'active') {
+  //   return resourceGroup.merge(storageAccount);
+  // }
+  // return resourceGroup;
+  return resourceGroup.merge(storageAccount);
 
 }
-
-// Functional approach
 
 export function createMyStack(
   scope: Construct,
@@ -65,17 +64,4 @@ export function createMyStack(
   const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
   return new Terrakit(terrakitStack)
     .setComposer(createComposer)
-}
-
-// Class approach
-
-export class MyStack extends TerrakitStack<MyTerrakitStackConfig> {
-  constructor(public scope: Construct, public options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>) {
-    super(scope, options);
-  }
-
-  configureStack() {
-    return new Terrakit(this)
-      .setComposer(createComposer)
-  }
 }
