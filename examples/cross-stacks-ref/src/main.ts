@@ -20,10 +20,10 @@ const myStack = createMyStack(app, {
 })
   .override({
     storage_account: {
-      name: 'custom-rg'
+      name: 'custom-rg',
     },
     resource_group: {
-      name: 'my-rg'
+      name: 'my-rg',
     }
   })
   .build();

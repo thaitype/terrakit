@@ -2,6 +2,7 @@ import type { TerraformProvider } from 'cdktf';
 import type { Construct } from 'constructs';
 import merge from 'lodash.merge';
 import type { PartialDeep } from 'type-fest';
+import type { ExtractComposer } from './types.js';
 
 export type AnyClass = { new(...args: any[]): any };
 
@@ -26,6 +27,8 @@ export interface RawConfig {
   config: (args: ResourceCallbackArgs<Record<string, unknown>>) => unknown;
   if?: boolean;
 }
+
+export type AnyBlockComposer = BlockComposer<any, any>;
 
 export class BlockComposer<
   ResourceConfigs extends Record<string, unknown> = {},
@@ -81,14 +84,18 @@ export class BlockComposer<
    * merge composer to another composer
    * @returns
    */
-  merge<Id extends string, ResourceType extends AnyClass>(
-    composer: BlockComposer<Record<Id, ConstructorParameters<ResourceType>[2]>, Record<Id, InstanceType<ResourceType>>>
-  ) {
+  merge<
+    NewComposer extends AnyBlockComposer,
+    NewConfig extends ExtractComposer<NewComposer>['configs'],
+    NewOutputs extends ExtractComposer<NewComposer>['outputs']>
+    (
+      composer: NewComposer,
+    ) {
     this._resourceRawConfigs = merge({}, this._resourceRawConfigs, composer._resourceRawConfigs);
     this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, composer._overrideResourceConfigs);
     return this as BlockComposer<
-      ResourceConfigs & Record<Id, ConstructorParameters<ResourceType>[2]>,
-      Outputs & Record<Id, InstanceType<ResourceType>>
+      ResourceConfigs & NewConfig,
+      Outputs & NewOutputs
     >;
   }
 
