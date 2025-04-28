@@ -1,11 +1,10 @@
 import { type CallbackProvider, type ComposerFactoryFn, Terrakit, BlockComposer, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
-import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
 import { StorageAccount } from "@cdktf/provider-azurerm/lib/storage-account/index.js";
 
 export interface MyTerrakitStackConfig {
-  identifier: {
+  vars: {
     env: 'prod';
     slot: 'prod' | 'staging';
     site: 'active' | 'dr';
@@ -59,9 +58,10 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
 
 export function createMyStack(
   scope: Construct,
-  options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
+  stackId: string,
+  options: MyTerrakitStackConfig
 ) {
-  const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
+  const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, stackId, options);
   return new Terrakit(terrakitStack)
     .setComposer(createComposer)
 }

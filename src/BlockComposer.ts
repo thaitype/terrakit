@@ -4,7 +4,7 @@ import merge from 'lodash.merge';
 import type { PartialDeep } from 'type-fest';
 import type { ExtractComposer } from './types.js';
 
-export type AnyClass = { new(...args: any[]): any };
+export type AnyClass = { new (...args: any[]): any };
 
 export type TerrakitResourceConfigs<Type extends AnyClass = AnyClass> = Record<
   string,
@@ -42,7 +42,7 @@ export class BlockComposer<
   constructor(
     private scope: Construct,
     private providers: Record<string, TerraformProvider>
-  ) { }
+  ) {}
 
   addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
@@ -87,16 +87,11 @@ export class BlockComposer<
   merge<
     NewComposer extends AnyBlockComposer,
     NewConfig extends ExtractComposer<NewComposer>['configs'],
-    NewOutputs extends ExtractComposer<NewComposer>['outputs']>
-    (
-      composer: NewComposer,
-    ) {
+    NewOutputs extends ExtractComposer<NewComposer>['outputs'],
+  >(composer: NewComposer) {
     this._resourceRawConfigs = merge({}, this._resourceRawConfigs, composer._resourceRawConfigs);
     this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, composer._overrideResourceConfigs);
-    return this as BlockComposer<
-      ResourceConfigs & NewConfig,
-      Outputs & NewOutputs
-    >;
+    return this as BlockComposer<ResourceConfigs & NewConfig, Outputs & NewOutputs>;
   }
 
   prepareResources() {

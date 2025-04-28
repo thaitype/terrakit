@@ -3,23 +3,50 @@ import type { Construct } from 'constructs';
 import type { BlockComposer } from './BlockComposer.js';
 
 export type CallbackProvider = (scope: Construct) => TerraformProvider;
-
+/**
+ * Defines the shape of a stack configuration in Terrakit.
+ */
 export interface TerrakitStackConfig {
-  identifier: object;
+  /**
+   * External input values provided to this stack.
+   * These are user-defined parameters or values passed from other stacks.
+   * Typically used to configure environment, feature flags, shared resource references, etc.
+   *
+   * Example:
+   * ```ts
+   * vars: {
+   *   env: 'prod',
+   *   site: 'active',
+   *   sharedResourceGroupName: 'rg-shared'
+   * }
+   * ```
+   */
+  vars: object;
+
+  /**
+   * A map of named provider callbacks, used to initialize providers for this stack.
+   * Keys represent provider aliases.
+   *
+   * Example:
+   * ```ts
+   * providers: {
+   *   defaultAzureProvider: (scope) => new AzurermProvider(scope, 'default', { ... })
+   * }
+   * ```
+   */
   providers: Record<string, CallbackProvider>;
 }
 
+/**
+ * Options used to initialize a Terrakit stack instance.
+ */
 export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitStackConfig> {
   /**
-   * Terraform stack ID, and the `identifier` needs to be provided.
-   *
-   * @default - A unique stack id will be generated from the identifier.
+   * Values passed into the stack from the outside.
+   * Can include environment identifiers, feature flags, shared values, or cross-stack inputs.
    */
-  id?: string;
-  /**
-   * The identifier of the stack.
-   */
-  identifier: Config['identifier'];
+  vars: Config['vars'];
+
   /**
    * The providers to use in this stack.
    *
@@ -27,7 +54,10 @@ export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitSt
    */
   providers?: Config['providers'];
 
-  composer?: BlockComposer;
+  /**
+   * Optional composer override used to manually supply a custom BlockComposer instance.
+   */
+  // composer?: BlockComposer;
 }
 
 // ----------------------------

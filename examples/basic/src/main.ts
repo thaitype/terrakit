@@ -3,8 +3,8 @@ import { createMyStack } from "./MyStack.js";
 
 import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
 const app = new App();
-const myStack = createMyStack(app, {
-  identifier: {
+const myStack = createMyStack(app, 'basic', {
+  vars: {
     env: 'prod',
     slot: 'prod',
     site: 'active'
@@ -18,12 +18,12 @@ const myStack = createMyStack(app, {
     })
   },
 })
-.override({
-  aaa1: {
-    name: 'custom-rg'
-  }
-})
-.build();
+  .override({
+    aaa1: {
+      name: 'custom-rg'
+    }
+  })
+  .build();
 
 
 app.synth();

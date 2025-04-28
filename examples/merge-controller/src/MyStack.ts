@@ -1,11 +1,10 @@
 import { type CallbackProvider, type ComposerFactoryFn, Terrakit, BlockComposer, type TerrakitOptions, TerrakitStack } from "terrakit";
 import { Construct } from "constructs";
-import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
 import { StorageAccount } from "@cdktf/provider-azurerm/lib/storage-account/index.js";
 
 export interface MyTerrakitStackConfig {
-  identifier: {
+  vars: {
     env: 'prod';
     slot: 'prod' | 'staging';
     site: 'active' | 'dr';
@@ -49,7 +48,7 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
     throw new Error(`ResourceGroup is not defined`);
   }
 
-  if (stack.options.identifier.site === 'active') {
+  if (stack.options.vars.site === 'active') {
     return resourceGroup.merge(storageAccount);
   }
   return resourceGroup;
@@ -60,9 +59,10 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
 
 export function createMyStack(
   scope: Construct,
-  options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
+  stackId: string,
+  options: MyTerrakitStackConfig,
 ) {
-  const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
+  const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, stackId, options);
   return new Terrakit(terrakitStack)
     .setComposer(createComposer)
 }
@@ -70,8 +70,8 @@ export function createMyStack(
 // Class approach
 
 export class MyStack extends TerrakitStack<MyTerrakitStackConfig> {
-  constructor(public scope: Construct, public options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>) {
-    super(scope, options);
+  constructor(public scope: Construct, stackId: string, public options: MyTerrakitStackConfig) {
+    super(scope, stackId, options);
   }
 
   configureStack() {

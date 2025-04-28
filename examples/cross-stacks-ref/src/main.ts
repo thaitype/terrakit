@@ -3,8 +3,8 @@ import { createMyStack } from "./MyStack.js";
 import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
 
 const app = new App();
-const myStack = createMyStack(app, {
-  identifier: {
+const myStack = createMyStack(app, 'my-stack',  {
+  vars: {
     env: 'prod',
     slot: 'prod',
     site: 'active'
@@ -28,7 +28,8 @@ const myStack = createMyStack(app, {
   })
   .build();
 
-
+// getting the output of resource_group
+myStack.outputs.resource_group?.name;
   
 app.synth();
 
