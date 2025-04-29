@@ -14,8 +14,8 @@ export interface MyTerrakitStackConfig {
   };
 }
 
-export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
-  return new BlockComposer(stack, stack.providers)
+export const defineResources = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
+  return stack.newComposer()
     .addClass({
       id: 'aaa1',
       type: ResourceGroup,
@@ -72,5 +72,5 @@ export function createMyStack(
 ) {
   const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, stackId, options);
   return new Terrakit(terrakitStack)
-    .setComposer(createComposer)
+    .setComposer(defineResources)
 }

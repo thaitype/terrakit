@@ -14,8 +14,8 @@ export interface MyTerrakitStackConfig {
   };
 }
 
-export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
-  const resourceGroup = new BlockComposer(stack, stack.providers)
+export const defineResources = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
+  const resourceGroup = stack.newComposer()
     .addClass({
       id: 'resource_group',
       type: ResourceGroup,
@@ -28,7 +28,7 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
     .alwaysOptional();
 
 
-  const storageAccount = new BlockComposer(stack, stack.providers)
+  const storageAccount = stack.newComposer()
     .addClass({
       id: 'storage_account',
       type: StorageAccount,
@@ -55,8 +55,6 @@ export const createComposer = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
 
 }
 
-// Functional approach
-
 export function createMyStack(
   scope: Construct,
   stackId: string,
@@ -64,18 +62,5 @@ export function createMyStack(
 ) {
   const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, stackId, options);
   return new Terrakit(terrakitStack)
-    .setComposer(createComposer)
-}
-
-// Class approach
-
-export class MyStack extends TerrakitStack<MyTerrakitStackConfig> {
-  constructor(public scope: Construct, stackId: string, public options: MyTerrakitStackConfig) {
-    super(scope, stackId, options);
-  }
-
-  configureStack() {
-    return new Terrakit(this)
-      .setComposer(createComposer)
-  }
+    .setComposer(defineResources)
 }

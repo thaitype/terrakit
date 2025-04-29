@@ -7,6 +7,10 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
   providers!: Record<keyof Config['providers'], TerraformProvider>;
   public composer!: BlockComposer;
 
+  newComposer(): BlockComposer {
+    return new BlockComposer(this, this.providers);
+  }
+
   constructor(
     scope: Construct,
     protected readonly id: string,

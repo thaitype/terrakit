@@ -1,4 +1,4 @@
-import { App, TerraformOutput } from "cdktf";
+import { App } from "cdktf";
 import { createMyStack } from "./MyStack.js";
 import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
 
@@ -13,7 +13,7 @@ const myStack = createMyStack(app, 'merge-controller', {
     defaultAzureProvider: (scope) => new AzurermProvider(scope, "azurerm_provider_default", {
       // skipProviderRegistration: true,
       subscriptionId: '00000000-0000-0000-0000-000000000000',
-      features: {}
+      features: undefined
     })
   },
 })
