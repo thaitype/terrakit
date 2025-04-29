@@ -1,69 +1,59 @@
 import type { TerrakitStack } from './TerrakitStack.js';
-import type { ExtractController, MergeControllerUnion, TerrakitStackConfig } from './types.js';
-import type { TerrakitController } from './TerrakitController.js';
+import type { ExtractComposer, MergeComposerUnion, TerrakitStackConfig } from './types.js';
+import type { BlockComposer } from './BlockComposer.js';
 import type { PartialDeep } from 'type-fest';
 
 /**
  * The shape of a generic factory function that
- * returns a TerrakitController for a given stack.
+ * returns a BlockComposer for a given stack.
  */
-export type ControllerFactoryFn<S extends TerrakitStackConfig> = (
-  stack: TerrakitStack<S>
-) => TerrakitController<any, any>;
+export type ComposerFactoryFn<S extends TerrakitStackConfig> = (stack: TerrakitStack<S>) => BlockComposer<any, any>;
 
 export class Terrakit<
   StackConfig extends TerrakitStackConfig,
   Configs extends Record<string, unknown> = {},
   Outputs extends Record<string, unknown> = {},
 > {
-  public controller: TerrakitController<any> | undefined;
+  public composer!: BlockComposer<Configs, Outputs>;
 
   constructor(public readonly stack: TerrakitStack<StackConfig>) {}
 
-  // setController<Configs extends Record<string, unknown>, Outputs extends Record<string, unknown>>(
-  //   callbackController: CallbackController<StackConfig, Configs, Outputs>
-  // ) {
-  //   console.log('Defining resources');
-  //   this.controller = callbackController(this.stack);
-  //   return this as unknown as Terrakit<StackConfig, Configs, Outputs>;
-  // }
-
   /**
    * A single function signature that returns
-   * a Terrakit with the "merged" type of the returned controller.
+   * a Terrakit with the "merged" type of the returned composer.
    */
-  public setController<T extends ControllerFactoryFn<StackConfig>>(callbackController: T) {
+  public setComposer<T extends ComposerFactoryFn<StackConfig>>(callbackComposer: T) {
     console.log('Defining resources');
 
-    // Invoke the provided controller factory function and ensure its return type
-    // is correctly transformed using MergeControllerUnion to merge configurations.
-    const mergedController = callbackController(this.stack) as MergeControllerUnion<ReturnType<T>>;
+    // Invoke the provided composer factory function and ensure its return type
+    // is correctly transformed using MergeComposerUnion to merge configurations.
+    const mergedComposer = callbackComposer(this.stack) as MergeComposerUnion<ReturnType<T>>;
 
-    // Store the merged controller instance.
-    this.controller = mergedController;
+    // Store the merged composer instance.
+    this.composer = mergedComposer as unknown as BlockComposer<Configs, Outputs>;
 
-    // Return `this` with updated type parameters that reflect the merged controller’s structure.
-    // We extract 'configs' and 'outputs' types using ExtractController<MergeControllerUnion<ReturnType<T>>>.
-    return this as Terrakit<
+    // Return `this` with updated type parameters that reflect the merged composer’s structure.
+    // We extract 'configs' and 'outputs' types using ExtractComposer<MergeComposerUnion<ReturnType<T>>>.
+    return this as unknown as Terrakit<
       StackConfig,
-      ExtractController<MergeControllerUnion<ReturnType<T>>>['configs'], // Extracts and assigns the new config type
-      ExtractController<MergeControllerUnion<ReturnType<T>>>['outputs'] // Extracts and assigns the new outputs type
+      ExtractComposer<MergeComposerUnion<ReturnType<T>>>['configs'], // Extracts and assigns the new config type
+      ExtractComposer<MergeComposerUnion<ReturnType<T>>>['outputs'] // Extracts and assigns the new outputs type
     >;
   }
 
-  overrideResources(arg: PartialDeep<Configs>) {
-    if (!this.controller) {
-      throw new Error('Controller not defined, call setController first');
+  override(arg: PartialDeep<Configs>) {
+    if (!this.composer) {
+      throw new Error('Composer not defined, call setComposer first');
     }
-    this.controller.overrideStack(arg);
+    this.composer.override(arg);
     return this;
   }
 
   build() {
-    if (!this.controller) {
-      throw new Error('Controller not defined');
+    if (!this.composer) {
+      throw new Error('Composer not defined');
     }
     console.log('Building resources');
-    this.controller.build();
+    return this.composer.build();
   }
 }

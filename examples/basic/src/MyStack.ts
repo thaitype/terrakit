@@ -1,11 +1,10 @@
-import { type CallbackProvider, Terrakit, TerrakitController, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
+import { type CallbackProvider, Terrakit, BlockComposer, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
 import { Construct } from "constructs";
-import type { SetRequired } from 'type-fest';
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
 import { StorageAccount } from "@cdktf/provider-azurerm/lib/storage-account/index.js";
 
 export interface MyTerrakitStackConfig {
-  identifier: {
+  vars: {
     env: 'prod';
     slot: 'prod' | 'staging';
     site: 'active' | 'dr';
@@ -15,9 +14,9 @@ export interface MyTerrakitStackConfig {
   };
 }
 
-export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
-  return new TerrakitController(stack, stack.providers)
-    .add({
+export const defineResources = (stack: TerrakitStack<MyTerrakitStackConfig>) => {
+  return stack.newComposer()
+    .addClass({
       id: 'aaa1',
       type: ResourceGroup,
       config: ({ providers }) => ({
@@ -26,7 +25,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
         location: 'eastus'
       }),
     })
-    .add({
+    .addClass({
       id: 'aaa2',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
@@ -38,9 +37,9 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
         accountTier: 'Standard'
       }),
     })
-    .add({
+    .addClass({
       id: 'aaa3',
-      if: stack.options.identifier.env === 'prod',
+      if: stack.options.vars.env === 'prod',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,
@@ -51,7 +50,7 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
         accountTier: 'Standard'
       }),
     })
-    .add({
+    .addClass({
       id: 'aaa4',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
@@ -68,9 +67,10 @@ export const createController = (stack: TerrakitStack<MyTerrakitStackConfig>) =>
 
 export function createMyStack(
   scope: Construct,
-  options: SetRequired<TerrakitOptions<MyTerrakitStackConfig>, 'identifier' | 'providers'>
+  stackId: string,
+  options: MyTerrakitStackConfig
 ) {
-  const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, options);
+  const terrakitStack = new TerrakitStack<MyTerrakitStackConfig>(scope, stackId, options);
   return new Terrakit(terrakitStack)
-    .setController(createController)
+    .setComposer(defineResources)
 }

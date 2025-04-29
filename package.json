@@ -12,11 +12,6 @@
       "types": "./dist/dts/index.d.ts",
       "import": "./dist/esm/index.js",
       "default": "./dist/cjs/index.js"
-    },
-    "./calculator": {
-      "types": "./dist/dts/calculator.d.ts",
-      "import": "./dist/esm/calculator.js",
-      "default": "./dist/cjs/calculator.js"
     }
   },
   "files": [

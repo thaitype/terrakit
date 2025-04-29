@@ -2,8 +2,7 @@ import type { TerraformProvider } from 'cdktf';
 import type { Construct } from 'constructs';
 import merge from 'lodash.merge';
 import type { PartialDeep } from 'type-fest';
-import type { TerrakitStack } from './TerrakitStack.js';
-import type { MergeControllerUnion } from './types.js';
+import type { ExtractComposer } from './types.js';
 
 export type AnyClass = { new (...args: any[]): any };
 
@@ -23,18 +22,19 @@ export interface ResourceCallbackArgs<Outputs extends Record<string, unknown>> {
   scope: Construct;
 }
 
-export class TerrakitController<
+export interface RawConfig {
+  type: AnyClass;
+  config: (args: ResourceCallbackArgs<Record<string, unknown>>) => unknown;
+  if?: boolean;
+}
+
+export type AnyBlockComposer = BlockComposer<any, any>;
+
+export class BlockComposer<
   ResourceConfigs extends Record<string, unknown> = {},
   Outputs extends Record<string, unknown> = {},
 > {
-  private _resourceRawConfigs: Record<
-    string,
-    {
-      type: AnyClass;
-      config: (args: ResourceCallbackArgs<Record<string, unknown>>) => unknown;
-      if?: boolean;
-    }
-  > = {};
+  private _resourceRawConfigs: Record<string, RawConfig> = {};
   private _resources: Record<string, unknown> = {};
   private _overrideResourceConfigs: Record<string, unknown> = {};
   private _outputs: Record<string, unknown> = {};
@@ -44,29 +44,29 @@ export class TerrakitController<
     private providers: Record<string, TerraformProvider>
   ) {}
 
-  add<Id extends string, ResourceType extends AnyClass>(args: {
+  addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
-  }): TerrakitController<
+  }): BlockComposer<
     ResourceConfigs & Record<Id, ConstructorParameters<ResourceType>[2]>,
     Outputs & Record<Id, InstanceType<ResourceType>>
   >;
 
-  add<Id extends string, ResourceType extends AnyClass>(args: {
+  addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
     if: boolean;
-  }): TerrakitController<
+  }): BlockComposer<
     ResourceConfigs & Record<Id, ConstructorParameters<ResourceType>[2]>,
     Outputs & Partial<Record<Id, InstanceType<ResourceType>>>
   >;
 
   /**
-   * Add a resource to the controller
+   * Add a resource to the composer
    */
-  add<Id extends string, ResourceType extends AnyClass>(args: {
+  addClass<Id extends string, ResourceType extends AnyClass>(args: {
     id: Id;
     type: ResourceType;
     config: (args: ResourceCallbackArgs<Outputs>) => ConstructorParameters<ResourceType>[2];
@@ -81,21 +81,17 @@ export class TerrakitController<
   }
 
   /**
-   * merge controller to another controller
+   * merge composer to another composer
    * @returns
    */
-  merge<Id extends string, ResourceType extends AnyClass>(
-    controller: TerrakitController<
-      Record<Id, ConstructorParameters<ResourceType>[2]>,
-      Record<Id, InstanceType<ResourceType>>
-    >
-  ) {
-    this._resourceRawConfigs = merge({}, this._resourceRawConfigs, controller._resourceRawConfigs);
-    this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, controller._overrideResourceConfigs);
-    return this as TerrakitController<
-      ResourceConfigs & Record<Id, ConstructorParameters<ResourceType>[2]>,
-      Outputs & Record<Id, InstanceType<ResourceType>>
-    >;
+  merge<
+    NewComposer extends AnyBlockComposer,
+    NewConfig extends ExtractComposer<NewComposer>['configs'],
+    NewOutputs extends ExtractComposer<NewComposer>['outputs'],
+  >(composer: NewComposer) {
+    this._resourceRawConfigs = merge({}, this._resourceRawConfigs, composer._resourceRawConfigs);
+    this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, composer._overrideResourceConfigs);
+    return this as BlockComposer<ResourceConfigs & NewConfig, Outputs & NewOutputs>;
   }
 
   prepareResources() {
@@ -114,7 +110,7 @@ export class TerrakitController<
     return resourceCallbacks;
   }
 
-  overrideStack(resources: PartialDeep<ResourceConfigs>) {
+  override(resources: PartialDeep<ResourceConfigs>) {
     this._overrideResourceConfigs = merge({}, this._overrideResourceConfigs, resources);
     return this;
   }
@@ -135,7 +131,11 @@ export class TerrakitController<
       });
       console.log(`Built resource ${id}`);
     }
-    return this as TerrakitController<ResourceConfigs, Outputs>;
+    return this as BlockComposer<ResourceConfigs, Outputs>;
+  }
+
+  alwaysOptional() {
+    return this as BlockComposer<ResourceConfigs, Outputs> | undefined;
   }
 
   get outputs() {
