@@ -1,5 +1,5 @@
 {
-  "name": "cross-stacks-ref",
+  "name": "cross-stacks",
   "module": "index.ts",
   "type": "module",
   "private": true,
