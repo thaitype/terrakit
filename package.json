@@ -1,7 +1,7 @@
 {
   "name": "terrakit",
   "type": "module",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "author": "Thada Wangthammang",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
