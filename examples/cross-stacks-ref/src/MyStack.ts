@@ -1,4 +1,4 @@
-import { type CallbackProvider, type ComposerFactoryFn, Terrakit, BlockComposer, type TerrakitOptions, TerrakitStack } from "terrakit";
+import { type CallbackProvider, type ComposerFactoryFn, Terrakit, BlockComposer, type TerrakitOptions, TerrakitStack, type TerrakitStackConfig } from "terrakit";
 import { Construct } from "constructs";
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
 import { StorageAccount } from "@cdktf/provider-azurerm/lib/storage-account/index.js";
@@ -65,3 +65,34 @@ export function createMyStack(
   return new Terrakit(terrakitStack)
     .setComposer(createComposer)
 }
+
+export function createStack<
+  ComposerFactory extends ComposerFactoryFn<any>,
+>(callbackComposer: ComposerFactory) {
+  return {
+    from(
+      scope: Construct,
+      name: string,
+      options: Parameters<ComposerFactory>[0]['options']
+    ) {
+      const terrakitStack = new TerrakitStack(scope, name, options);
+      return new Terrakit(terrakitStack).setComposer(callbackComposer);
+    },
+  };
+}
+
+export const MyStack = createStack((stack: TerrakitStack<MyTerrakitStackConfig>) => {
+  const resourceGroup = new BlockComposer(stack, stack.providers)
+    .addClass({
+      id: 'resource_group',
+      type: ResourceGroup,
+      config: ({ providers }) => ({
+        provider: providers.defaultAzureProvider,
+        name: 'rg-' + stack.options.vars.env,
+        location: 'eastus'
+      }),
+    })
+
+  return resourceGroup;
+});
+

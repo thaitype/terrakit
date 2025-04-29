@@ -13,14 +13,6 @@ export class TerrakitStack<Config extends TerrakitStackConfig = TerrakitStackCon
     public readonly options: TerrakitOptions<Config>
   ) {
     super(scope, id);
-    // if (!options) {
-    //   throw new Error('The options are required to initialize the TerrakitStack.');
-    // }
-    // if (options.composer) {
-    //   console.log('Initialized composer at TerrakitStack');
-    //   options.composer.build();
-    //   this.composer = options.composer;
-    // } else
     if (options.providers) {
       this.providers = TerrakitStack.setupProviders(this, options) as Record<
         keyof Config['providers'],
