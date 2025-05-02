@@ -4,7 +4,7 @@ import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.
 import { StorageAccount } from "@cdktf/provider-azurerm/lib/storage-account/index.js";
 
 export interface MyTerrakitStackConfig {
-  vars: {
+  inputs: {
     env: 'prod';
     slot: 'prod' | 'staging';
     site: 'active' | 'dr';
@@ -48,7 +48,7 @@ export const defineResources = (stack: TerrakitStack<MyTerrakitStackConfig>) => 
     throw new Error(`ResourceGroup is not defined`);
   }
 
-  if (stack.options.vars.site === 'active') {
+  if (stack.options.inputs.site === 'active') {
     return resourceGroup.merge(storageAccount);
   }
   return resourceGroup;

@@ -4,7 +4,7 @@ import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.
 import { StorageAccount } from "@cdktf/provider-azurerm/lib/storage-account/index.js";
 
 export interface MyTerrakitStackConfig {
-  vars: {
+  inputs: {
     env: 'prod';
     slot: 'prod' | 'staging';
     site: 'active' | 'dr';
@@ -39,7 +39,7 @@ export const defineResources = (stack: TerrakitStack<MyTerrakitStackConfig>) => 
     })
     .addClass({
       id: 'aaa3',
-      if: stack.options.vars.env === 'prod',
+      if: stack.options.inputs.env === 'prod',
       type: StorageAccount,
       config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,

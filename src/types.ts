@@ -14,14 +14,14 @@ export interface TerrakitStackConfig {
    *
    * Example:
    * ```ts
-   * vars: {
+   * inputs: {
    *   env: 'prod',
    *   site: 'active',
    *   sharedResourceGroupName: 'rg-shared'
    * }
    * ```
    */
-  vars: object;
+  inputs: object;
 
   /**
    * A map of named provider callbacks, used to initialize providers for this stack.
@@ -45,7 +45,7 @@ export interface TerrakitOptions<Config extends TerrakitStackConfig = TerrakitSt
    * Values passed into the stack from the outside.
    * Can include environment identifiers, feature flags, shared values, or cross-stack inputs.
    */
-  vars: Config['vars'];
+  inputs: Config['inputs'];
 
   /**
    * The providers to use in this stack.

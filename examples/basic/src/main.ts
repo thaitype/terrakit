@@ -4,7 +4,7 @@ import { createMyStack } from "./MyStack.js";
 import { AzurermProvider } from "@cdktf/provider-azurerm/lib/provider/index.js";
 const app = new App();
 const myStack = createMyStack(app, 'basic', {
-  vars: {
+  inputs: {
     env: 'prod',
     slot: 'prod',
     site: 'active'

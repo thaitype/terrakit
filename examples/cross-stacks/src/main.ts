@@ -6,7 +6,7 @@ import { createStorageAccountStack } from "./StorageAccountStack.js";
 const app = new App();
 
 const resourceGroup = createResourceGroupStack(app, 'cross-stack-rg', {
-  vars: {
+  inputs: {
     location: 'eastus',
   },
   providers: {
@@ -29,7 +29,7 @@ if (!resourceGroup.outputs.my_resource_group) {
 }
 
 const storageAccount = createStorageAccountStack(app, 'cross-stack-storage', {
-  vars: {
+  inputs: {
     resourceGroupName: resourceGroup.outputs.my_resource_group.name,
   },
   providers: {

@@ -3,7 +3,7 @@ import { Construct } from "constructs";
 import { StorageAccount } from '@cdktf/provider-azurerm/lib/storage-account/index.js';
 
 export interface StorageAccountStackConfig {
-  vars: {
+  inputs: {
     resourceGroupName: string;
   };
   providers: {
@@ -19,7 +19,7 @@ export const defineResources = (stack: TerrakitStack<StorageAccountStackConfig>)
       config: ({ providers, outputs }) => ({
         provider: providers.defaultAzureProvider,
         name: 'sa' + 'aaa2',
-        resourceGroupName: stack.options.vars.resourceGroupName,
+        resourceGroupName: stack.options.inputs.resourceGroupName,
         location: 'eastus',
         accountReplicationType: 'LRS',
         accountTier: 'Standard'

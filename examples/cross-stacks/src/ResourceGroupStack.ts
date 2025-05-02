@@ -3,7 +3,7 @@ import { Construct } from "constructs";
 import { ResourceGroup } from "@cdktf/provider-azurerm/lib/resource-group/index.js";
 
 export interface ResourceGroupStackConfig {
-  vars: {
+  inputs: {
     location: string;
   };
   providers: {
@@ -19,7 +19,7 @@ export const defineResources = (stack: TerrakitStack<ResourceGroupStackConfig>) 
       config: ({ providers }) => ({
         provider: providers.defaultAzureProvider,
         name: 'rg-' + 'aaa1',
-        location: stack.options.vars.location,
+        location: stack.options.inputs.location,
       }),
     })
 }
